@@ -15,15 +15,16 @@ class MenuController:
             return self.user_creation_controller()
 
     def user_creation_controller(self):
-        email, name, pass_hash = self.menu.add_user_view()
-        user = User(email, name, pass_hash)
+        email, name, pass_hush = self.menu.add_user_view()
+        user = User(email, name, pass_hush)
         user.save_user_to_db()
         return self.main_menu()
 
     def login_controller(self):
         email, password = self.menu.login_view()
-        user = find_user(email, password)
-        if user is True:
-            print("True")
+        token, name, password_hush = find_user(email, password)
+        if token is False:
+            print("Connection failed!")
         else:
-            print("False")
+            user_account = User(email, name, password_hush, token=token)
+            return None

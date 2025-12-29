@@ -7,11 +7,15 @@ class Menu:
         pass
 
     def main_menu_view():
+        AVAILABLE_CHOICES = ["1", "2"]
         print("EPIC EVENTS Application")
         print("Choose option:")
         print("1. Log-in to an existing account.")
         print("2. Create account.")
         user_choice = input(">>> ")
+        while user_choice not in AVAILABLE_CHOICES:
+            print('Choose an existant option:')
+            user_choice = input(">>> ")
         return user_choice
 
     def add_user_view():
