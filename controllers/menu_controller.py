@@ -1,30 +1,40 @@
 from views.menu_view import Menu
-from models.user_model import User, find_user
+from controllers.user_controller import UserController
 
 
 class MenuController:
 
     def __init__(self):
-        self.menu = Menu
+        self.user_controller = UserController()
+        self.MAIN_MENU_OPTIONS = {
+            "1": {"text": "Log-in to an existing account",
+                  "key": "1",
+                  "action": self.user_controller.login_controller},
+            "2": {"text": "Create an account",
+                  "key": "2",
+                  "action": self.user_controller.user_creation_controller},
+            "Q": {"text": "Quit programme",
+                  "key": "Q",
+                  "action": None}
+                  }
 
     def main_menu(self):
-        user_choice = self.menu.main_menu_view()
-        if user_choice == "1":
-            return self.login_controller()
-        if user_choice == "2":
-            return self.user_creation_controller()
+        main_menu = Menu('Main menu', self.MAIN_MENU_OPTIONS)
+        user_choice = main_menu.display_menu()
+        action = self.MAIN_MENU_OPTIONS[user_choice]["action"]
+        if action:
+            action()
+        while user_choice != "Q" and user_choice != "q":
+            user_choice = main_menu.display_menu()
+            if user_choice == "q" or user_choice == "Q":
+                return None
+            action = self.MAIN_MENU_OPTIONS[user_choice]["action"]
+            if action:
+                action()
+        return None
 
-    def user_creation_controller(self):
-        email, name, pass_hush = self.menu.add_user_view()
-        user = User(email, name, pass_hush)
-        user.save_user_to_db()
-        return self.main_menu()
+    def management_menu():
+        pass
 
-    def login_controller(self):
-        email, password = self.menu.login_view()
-        token, name, password_hush = find_user(email, password)
-        if token is False:
-            print("Connection failed!")
-        else:
-            user_account = User(email, name, password_hush, token=token)
-            return None
+    def commercial_menu():
+        pass
