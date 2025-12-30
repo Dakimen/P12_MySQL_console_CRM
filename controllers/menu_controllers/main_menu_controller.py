@@ -1,5 +1,8 @@
 from views.menu_view import Menu
 from controllers.user_controller import UserController
+from controllers.menu_controllers.commercial_menu_controller import CommercialMenuController
+from controllers.menu_controllers.management_menu_controller import ManagementMenuController
+from controllers.menu_controllers.support_menu_controller import SupportMenuController
 
 
 class MenuController:
@@ -30,11 +33,24 @@ class MenuController:
                 return None
             action = self.MAIN_MENU_OPTIONS[user_choice]["action"]
             if action:
-                action()
+                user = action()
+                if user:
+                    self.determine_role(user)
         return None
 
-    def management_menu():
-        pass
+    def determine_role(self, user):
+        role = user["role"]
 
-    def commercial_menu():
-        pass
+        role_menu_map = {
+            "management": ManagementMenuController,
+            "commercial": CommercialMenuController,
+            "support": SupportMenuController
+        }
+
+        controller_class = role_menu_map.get(role)
+
+        if not controller_class:
+            raise ValueError(f"Unknown role: {role}")
+
+        controller = controller_class()
+        controller.display()

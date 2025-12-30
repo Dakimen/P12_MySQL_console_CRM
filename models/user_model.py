@@ -2,7 +2,7 @@ import bcrypt
 from datetime import datetime, timedelta
 import jwt
 
-from db_connector import make_query, get_db_connection
+from data_manager.db_connector import make_query, get_db_connection
 from config import JWT_ALGORITHM, JWT_SECRET_KEY
 
 
@@ -40,6 +40,7 @@ def find_user(email, password):
              """ON user_role_assignment.user_id = user.id """
              """WHERE user.email = %s""")
     results = make_query(query, (email,))
+    results = results[0]
     try:
         stored_hush = results[3].encode()
         pass_match = bcrypt.checkpw(password.encode(), stored_hush)

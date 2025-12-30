@@ -18,4 +18,4 @@ def make_query(query_string, param):
     results = cursor.fetchall()
     cursor.close()
     connection.close()
-    return results[0]
+    return results

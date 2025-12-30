@@ -12,6 +12,7 @@ class UserController:
         user = User(email, name, pass_hush)
         user.save_user_to_db()
         self.view.account_created_info()
+        return None
 
     def login_controller(self):
         email, password = self.view.login_view()
@@ -20,5 +21,5 @@ class UserController:
             self.view.connection_failure()
         else:
             user_account = User(email, name, password_hush, token=token)
-            self.view.connection_success()
             return user_account
+        return None

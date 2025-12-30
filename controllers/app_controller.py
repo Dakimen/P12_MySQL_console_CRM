@@ -1,4 +1,4 @@
-from controllers.menu_controller import MenuController
+from controllers.menu_controllers.main_menu_controller import MenuController
 
 
 class AppContext:
