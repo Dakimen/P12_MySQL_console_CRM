@@ -24,8 +24,9 @@ class UserController:
             self.view.connection_failure()
         else:
             user_account = User(email, name, password_hush, token=token)
+            roles = AuthService.get_roles_from_token(token=token)
             AuthService.write_token_to_temp(token)
-            return user_account
+            return user_account, roles
         return None
 
     @classmethod

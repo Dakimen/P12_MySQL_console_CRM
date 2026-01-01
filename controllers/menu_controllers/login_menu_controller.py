@@ -27,13 +27,11 @@ class LoginMenuController:
                 data = json.load(file)
                 token = data['token']
             if self.auth_service.is_jwt_valid(token):
-                user_id = self.auth_service.get_user_id_from_token(token)
-                email, name, hush = self.user_controller.find_user_by_id(user_id)
-                user_account = User(email, name, hush, user_id, token)
-                return user_account
+                user = self.get_user_from_token(token)
+                user_roles = self.auth_service.get_roles_from_token(token)
+                return user, user_roles
             else:
-                with open(temp_storage, 'w') as file:
-                    json.dump({}, file)
+                self.auth_service.clean_json_temp(temp_storage)
                 return self.main_login_menu()
         except FileNotFoundError:
             return self.main_login_menu()
@@ -51,3 +49,9 @@ class LoginMenuController:
             action = self.MAIN_MENU_OPTIONS[user_choice]["action"]
             if action:
                 return action()
+
+    def get_user_from_token(self, token):
+        user_id = self.auth_service.get_user_id_from_token(token)
+        email, name, hush = self.user_controller.find_user_by_id(user_id)
+        user_account = User(email, name, hush, user_id, token)
+        return user_account

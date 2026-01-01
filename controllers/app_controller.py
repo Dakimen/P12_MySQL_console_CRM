@@ -9,8 +9,8 @@ class AppContext:
         self.menu_controller = MainMenuController()
 
     def run(self):
-        user = self.login_controller.verify_login_needed()
+        user, roles = self.login_controller.verify_login_needed()
         if user:
-            return self.menu_controller.main_menu(user)
+            return self.menu_controller.main_menu(user, roles)
         else:
             return None

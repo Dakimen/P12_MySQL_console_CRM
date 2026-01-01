@@ -9,13 +9,17 @@ from models.role_model import Role
 
 
 class AuthService:
-    def __init__(self):
-        self.roles = Role.get_roles_from_db()
 
-    def get_roles_from_token(self, token):
+    @staticmethod
+    def get_roles_from_token(token):
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-        roles = [role for role in payload.get('roles')]
-        return roles
+        role_ids = [role for role in payload.get('roles')]
+        return Role.get_roles_from_db(role_ids)
+
+    @staticmethod
+    def clean_json_temp(temp_storage):
+        with open(temp_storage, 'w') as file:
+            json.dump({}, file)
 
     @staticmethod
     def get_user_id_from_token(token):

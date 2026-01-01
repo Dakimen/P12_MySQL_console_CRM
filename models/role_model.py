@@ -7,9 +7,14 @@ class Role:
         self.title = title
 
     @staticmethod
-    def get_roles_from_db():
-        query = """SELECT BIN_TO_UUID(id), title FROM role"""
-        results = make_query(query, None)
+    def get_roles_from_db(role_ids):
+        placeholders = ", ".join(["%s"] * len(role_ids))
+        query = f"""
+            SELECT BIN_TO_UUID(id), title
+            FROM role
+            WHERE id IN ({placeholders})
+        """
+        results = make_query(query, role_ids)
         roles = []
         for result in results:
             role = Role(result[0], result[1])
