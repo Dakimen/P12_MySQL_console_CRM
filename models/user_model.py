@@ -1,9 +1,4 @@
-import bcrypt
-from datetime import datetime, timedelta
-import jwt
-
-from data_manager.db_connector import make_query, get_db_connection
-from config import JWT_ALGORITHM, JWT_SECRET_KEY
+from data_manager.db_connector import get_db_connection
 
 
 class User:
@@ -29,39 +24,3 @@ class User:
         cursor.close()
         connection.close()
         return None
-
-
-def find_user(email, password):
-    query = ("""SELECT BIN_TO_UUID(user.id), """
-             """BIN_TO_UUID(user_role_assignment.role_id), """
-             """user.name, user.password_hush """
-             """FROM user_role_assignment """
-             """JOIN user """
-             """ON user_role_assignment.user_id = user.id """
-             """WHERE user.email = %s""")
-    results = make_query(query, (email,))
-    results = results[0]
-    try:
-        stored_hush = results[3].encode()
-        pass_match = bcrypt.checkpw(password.encode(), stored_hush)
-        name = results[2]
-        if pass_match:
-            user_id = results[0]
-            role_id = results[1]
-            token = generate_web_token(user_id, role_id)
-            return token, name, stored_hush
-        else:
-            return False, None, None
-    except IndexError:
-        return False, None, None
-
-
-def generate_web_token(user_id, role_id):
-    time_now = datetime.now()
-    time_exp = time_now + timedelta(hours=2)
-    time_now = time_now.strftime("%d.%m.%Y %H:%M:%S")
-    time_exp = time_exp.strftime("%d.%m.%Y %H:%M:%S")
-    payload_jwt = {'id': user_id, 'role': role_id,
-                   'generated': time_now, 'exp': time_exp}
-    token = jwt.encode(payload_jwt, JWT_SECRET_KEY, JWT_ALGORITHM)
-    return token
