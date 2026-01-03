@@ -1,8 +1,8 @@
-from controllers.app_controller import AppContext
+from controllers.app_controller import AppController
 
 
 def main():
-    app = AppContext()
+    app = AppController()
     app.run()
 
 

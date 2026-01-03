@@ -50,11 +50,11 @@ class AuthService:
     def check_password(password, stored_hush):
         return bcrypt.checkpw(password.encode(), stored_hush.encode())
 
-
-def generate_web_token(user_id, roles):
-    time_now = datetime.now(timezone.utc)
-    time_exp = time_now + timedelta(hours=2)
-    payload_jwt = {'id': user_id, 'roles': roles,
-                   'iat': time_now, 'exp': time_exp}
-    token = jwt.encode(payload_jwt, JWT_SECRET_KEY, JWT_ALGORITHM)
-    return token
+    @staticmethod
+    def generate_web_token(user_id, roles):
+        time_now = datetime.now(timezone.utc)
+        time_exp = time_now + timedelta(hours=2)
+        payload_jwt = {'id': user_id, 'roles': roles,
+                       'iat': time_now, 'exp': time_exp}
+        token = jwt.encode(payload_jwt, JWT_SECRET_KEY, JWT_ALGORITHM)
+        return token

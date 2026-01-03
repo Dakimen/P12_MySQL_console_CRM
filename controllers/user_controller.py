@@ -1,7 +1,6 @@
 from models.user_model import User
 from views.user_view import UserView
 from data_manager.db_connector import make_query
-from controllers.auth_controller import generate_web_token
 from controllers.auth_controller import AuthService
 
 
@@ -15,18 +14,6 @@ class UserController:
         user = User(email, name, pass_hush)
         user.save_user_to_db()
         self.view.account_created_info()
-        return None
-
-    def login_controller(self):
-        email, password = self.view.login_view()
-        token, name, password_hush = UserController.find_user_by_email(email, password)
-        if token is False:
-            self.view.connection_failure()
-        else:
-            user_account = User(email, name, password_hush, token=token)
-            roles = AuthService.get_roles_from_token(token=token)
-            AuthService.write_token_to_temp(token)
-            return user_account, roles
         return None
 
     @classmethod
@@ -44,13 +31,12 @@ class UserController:
         """
         results = make_query(query, (email,))
         if not results:
-            return False, None, None
-        user_id, name, stored_hush, _ = results[0]
+            return None, None
+        user_id, _, stored_hush, _ = results[0]
         if not AuthService.check_password(password, stored_hush):
-            return False, None, None
+            return None, None
         role_ids = [row[3] for row in results]
-        token = generate_web_token(user_id, role_ids)
-        return token, name, stored_hush
+        return user_id, role_ids
 
     @classmethod
     def find_user_by_id(cls, user_id):
