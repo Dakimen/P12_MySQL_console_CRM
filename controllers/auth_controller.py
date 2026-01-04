@@ -5,16 +5,15 @@ import json
 import bcrypt
 
 from config import JWT_SECRET_KEY, JWT_ALGORITHM
-from models.role_model import Role
 
 
 class AuthService:
 
     @staticmethod
-    def get_roles_from_token(token):
+    def get_roles(token):
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-        role_ids = [role for role in payload.get('roles')]
-        return Role.get_roles_from_db(role_ids)
+        roles = [role for role in payload.get('roles')]
+        return roles
 
     @staticmethod
     def clean_json_temp(temp_storage):
@@ -58,3 +57,13 @@ class AuthService:
                        'iat': time_now, 'exp': time_exp}
         token = jwt.encode(payload_jwt, JWT_SECRET_KEY, JWT_ALGORITHM)
         return token
+
+    @staticmethod
+    def get_token_from_temp():
+        try:
+            with open("temp.json", 'r') as file:
+                data = json.load(file)
+                token = data['token']
+            return token
+        except (FileNotFoundError, KeyError, json.decoder.JSONDecodeError):
+            return None

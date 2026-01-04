@@ -1,5 +1,3 @@
-import json
-
 from views.menu_view import Menu
 from controllers.user_controller import User
 
@@ -20,28 +18,24 @@ class LoginMenuController:
                   }
 
     def verify_login_needed(self):
-        temp_storage = 'temp.json'
-        try:
-            with open(temp_storage, 'r') as file:
-                data = json.load(file)
-                token = data['token']
-            if self.auth_service.is_jwt_valid(token):
-                return True
-            else:
-                self.auth_service.clean_json_temp(temp_storage)
-                return self.main_login_menu()
-        except (FileNotFoundError, KeyError):
+        token = self.auth_service.get_token_from_temp()
+        if token is None:
+            return self.main_login_menu()
+        elif self.auth_service.is_jwt_valid(token):
+            return True
+        else:
+            self.auth_service.clean_json_temp("temp.json")
             return self.main_login_menu()
 
     def main_login_menu(self):
         main_menu = Menu('Login menu', self.LOGIN_MENU_OPTIONS)
-        user_choice = main_menu.display_menu()
+        user_choice = main_menu.display_menu().upper()
         action = self.LOGIN_MENU_OPTIONS[user_choice]["action"]
         if action:
             return action()
-        while user_choice != "Q" and user_choice != "q":
+        while user_choice != "Q":
             user_choice = main_menu.display_menu()
-            if user_choice == "q" or user_choice == "Q":
+            if user_choice == "Q":
                 return None
             action = self.LOGIN_MENU_OPTIONS[user_choice]["action"]
             if action:
@@ -49,12 +43,12 @@ class LoginMenuController:
 
     def login_controller(self):
         email, password = self.user_view.login_view()
-        user_id, role_ids = self.user_controller.find_user_by_email(email,
-                                                                    password)
+        user_id, roles = self.user_controller.find_user_by_email(email,
+                                                                 password)
         if not user_id:
             self.user_view.connection_failure()
         else:
-            token = self.auth_service.generate_web_token(user_id, role_ids)
+            token = self.auth_service.generate_web_token(user_id, roles)
             self.auth_service.write_token_to_temp(token)
             return True
         return False

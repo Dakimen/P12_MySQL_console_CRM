@@ -21,22 +21,23 @@ class UserController:
         query = """
             SELECT
                 BIN_TO_UUID(user.id),
-                user.name,
                 user.password_hush,
-                BIN_TO_UUID(user_role_assignment.role_id)
+                role.title
             FROM user
             JOIN user_role_assignment
                 ON user_role_assignment.user_id = user.id
+            JOIN role
+                ON user_role_assignment.role_id = role.id
             WHERE user.email = %s
         """
         results = make_query(query, (email,))
         if not results:
             return None, None
-        user_id, _, stored_hush, _ = results[0]
+        user_id, stored_hush, _ = results[0]
         if not AuthService.check_password(password, stored_hush):
             return None, None
-        role_ids = [row[3] for row in results]
-        return user_id, role_ids
+        role_titles = [row[2] for row in results]
+        return user_id, role_titles
 
     @classmethod
     def find_user_by_id(cls, user_id):
