@@ -10,23 +10,145 @@ class MenuController:
             "1": {"text": "Client Menu",
                   "key": "1",
                   "action": self.display_client_menu,
-                  "role": None},
+                  "role": None
+                  },
             "2": {"text": "Contract Menu",
                   "key": "2",
                   "action": self.display_contract_menu,
-                  "role": None},
+                  "role": None
+                  },
             "3": {"text": "Event Menu",
                   "key": "3",
                   "action": self.display_event_menu,
-                  "role": None},
+                  "role": None
+                  },
             "4": {"text": "Collaborator Menu",
                   "key": "4",
                   "action": self.display_collaborator_menu,
-                  "role": "management responsible"},
+                  "role": "management responsible"
+                  },
             "Q": {"text": "Quit programme",
                   "key": "Q",
                   "action": None,
-                  "role": None}
+                  "role": None
+                  }
+        }
+        self.CLIENT_MENU_OPTIONS = {
+            "1": {"text": "Display all clients",
+                  "key": "1",
+                  "action": None,
+                  "role": None
+                  },
+            "2": {"text": "Find client",
+                  "key": "2",
+                  "action": None,
+                  "role": None
+                  },
+            "3": {"text": "Add client",
+                  "key": "3",
+                  "action": None,
+                  "role": "commercial responsible"
+                  },
+            "4": {"text": "Update client info",
+                  "key": "4",
+                  "action": None,
+                  "role": "commercial responsible"
+                  },
+            "B": {"text": "Back to previous menu",
+                  "key": "B",
+                  "action": self.display_main_menu,
+                  "role": None
+                  }
+        }
+        self.CONTRACT_MENU_OPTIONS = {
+            "1": {"text": "Display all contracts",
+                  "key": "1",
+                  "action": None,
+                  "role": None
+                  },
+            "2": {"text": "Find contract",
+                  "key": "2",
+                  "action": None,
+                  "role": None
+                  },
+            "3": {"text": "Create contract",
+                  "key": "3",
+                  "action": None,
+                  "role": "management responsible"
+                  },
+            "4": {"text": "Modify contract",
+                  "key": "4",
+                  "action": None,
+                  "role": ["management responsible", "commercial responsible"]
+                  },
+            "5": {"text": "Filter contracts",
+                  "key": "5",
+                  "action": None,
+                  "role": "commercial responsible"
+                  },
+            "B": {"text": "Back to previous menu",
+                  "key": "B",
+                  "action": self.display_main_menu,
+                  "role": None
+                  }
+        }
+        self.EVENT_MENU_OPTIONS = {
+            "1": {"text": "Display all events",
+                  "key": "1",
+                  "action": None,
+                  "role": None
+                  },
+            "2": {"text": "Find event",
+                  "key": "2",
+                  "action": None,
+                  "role": None
+                  },
+            "3": {"text": "Create event",
+                  "key": "3",
+                  "action": None,
+                  "role": "commercial responsible"
+                  },
+            "4": {"text": "Modify event",
+                  "key": "4",
+                  "action": None,
+                  "role": ["support responsible", "management responsible"]
+                  },
+            "5": {"text": "Filter events",
+                  "key": "5",
+                  "action": None,
+                  "role": ["support responsible", "management responsible"]
+                  },
+            "B": {"text": "Back to previous menu",
+                  "key": "B",
+                  "action": self.display_main_menu,
+                  "role": None
+                  }
+        }
+        self.COLLAB_MENU_OPTIONS = {
+            "1": {"text": "Display all collaborators",
+                  "key": "1",
+                  "action": None
+                  },
+            "2": {"text": "Find collaborator",
+                  "key": "2",
+                  "action": None
+                  },
+            "3": {"text": "Add collaborator",
+                  "key": "3",
+                  "action": None
+                  },
+            "4": {"text": "Modify collaborator",
+                  "key": "4",
+                  "action": None
+                  },
+            "5": {"text": "Delete collaborator",
+                  "key": "5",
+                  "action": None
+                  },
+            "B": {"text": "Back to previous menu",
+                  "key": "B",
+                  "action": self.display_main_menu
+                  }
         }
 
     def display_main_menu(self):
