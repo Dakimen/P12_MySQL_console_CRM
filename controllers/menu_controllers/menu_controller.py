@@ -25,7 +25,7 @@ class MenuController:
             "4": {"text": "Collaborator Menu",
                   "key": "4",
                   "action": self.display_collaborator_menu,
-                  "role": "management responsible"
+                  "role": ["management responsible"]
                   },
             "Q": {"text": "Quit programme",
                   "key": "Q",
@@ -47,12 +47,12 @@ class MenuController:
             "3": {"text": "Add client",
                   "key": "3",
                   "action": None,
-                  "role": "commercial responsible"
+                  "role": ["commercial responsible"]
                   },
             "4": {"text": "Update client info",
                   "key": "4",
                   "action": None,
-                  "role": "commercial responsible"
+                  "role": ["commercial responsible"]
                   },
             "B": {"text": "Back to previous menu",
                   "key": "B",
@@ -74,7 +74,7 @@ class MenuController:
             "3": {"text": "Create contract",
                   "key": "3",
                   "action": None,
-                  "role": "management responsible"
+                  "role": ["management responsible"]
                   },
             "4": {"text": "Modify contract",
                   "key": "4",
@@ -84,7 +84,7 @@ class MenuController:
             "5": {"text": "Filter contracts",
                   "key": "5",
                   "action": None,
-                  "role": "commercial responsible"
+                  "role": ["commercial responsible"]
                   },
             "B": {"text": "Back to previous menu",
                   "key": "B",
@@ -106,7 +106,7 @@ class MenuController:
             "3": {"text": "Create event",
                   "key": "3",
                   "action": None,
-                  "role": "commercial responsible"
+                  "role": ["commercial responsible"]
                   },
             "4": {"text": "Modify event",
                   "key": "4",
@@ -169,7 +169,21 @@ class MenuController:
                 return action()
 
     def display_client_menu(self):
-        pass
+        authorized_options = self.get_authorized_menu_options(
+            self.CLIENT_MENU_OPTIONS
+            )
+        main_menu = Menu('Main Menu', authorized_options)
+        user_choice = main_menu.display_menu().upper()
+        action = authorized_options[user_choice]["action"]
+        if action:
+            return action()
+        while user_choice != "B":
+            user_choice = main_menu.display_menu()
+            if user_choice == "B":
+                return None
+            action = authorized_options[user_choice]["action"]
+            if action:
+                return action()
 
     def display_contract_menu(self):
         print("contract menu")
