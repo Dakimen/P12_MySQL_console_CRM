@@ -27,12 +27,15 @@ class AuthService:
 
     @staticmethod
     def is_jwt_valid(token):
-        try:
-            jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-            return True
-        except ExpiredSignatureError:
-            return False
-        except InvalidTokenError:
+        if token is not None:
+            try:
+                jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+                return True
+            except ExpiredSignatureError:
+                return False
+            except InvalidTokenError:
+                return False
+        else:
             return False
 
     @staticmethod

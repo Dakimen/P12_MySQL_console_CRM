@@ -18,5 +18,6 @@ class DataBaseConnector_MySQL:
         cursor.execute(query_string, param)
         results = cursor.fetchall()
         cursor.close()
+        connection.commit()
         connection.close()
         return results
