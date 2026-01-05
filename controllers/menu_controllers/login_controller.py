@@ -1,5 +1,4 @@
 from views.menu_view import Menu
-from controllers.user_controller import User
 
 
 class LoginMenuController:
@@ -52,9 +51,3 @@ class LoginMenuController:
             self.auth_service.write_token_to_temp(token)
             return True
         return False
-
-    def get_user_from_token(self, token):
-        user_id = self.auth_service.get_user_id_from_token(token)
-        email, name, hush = self.user_controller.find_user_by_id(user_id)
-        user_account = User(email, name, hush, user_id, token)
-        return user_account

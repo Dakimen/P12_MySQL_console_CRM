@@ -3,8 +3,10 @@ from jwt import ExpiredSignatureError, InvalidTokenError
 from datetime import datetime, timedelta, timezone
 import json
 import bcrypt
+import sys
 
 from config import JWT_SECRET_KEY, JWT_ALGORITHM
+from views.auth_view import token_expired_notification
 
 
 class AuthService:
@@ -24,6 +26,17 @@ class AuthService:
     def get_user_id_from_token(token):
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
         return payload.get('id')
+
+    @staticmethod
+    def get_user_id():
+        token = AuthService.get_token_from_temp()
+        permission = AuthService.is_jwt_valid(token)
+        if permission is True:
+            user_id = AuthService.get_user_id_from_token(token)
+            return user_id
+        else:
+            token_expired_notification()
+            sys.exit()
 
     @staticmethod
     def is_jwt_valid(token):
