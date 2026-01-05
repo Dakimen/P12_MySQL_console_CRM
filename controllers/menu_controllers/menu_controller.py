@@ -2,8 +2,9 @@ from views.menu_view import Menu
 
 
 class MenuController:
-    def __init__(self, auth_service):
+    def __init__(self, auth_service, client_controller):
         self.auth_service = auth_service
+        self.client_controller = client_controller
         self.user_token = None
         self.user_roles = None
         self.MAIN_MENU_OPTIONS = {
@@ -36,7 +37,7 @@ class MenuController:
         self.CLIENT_MENU_OPTIONS = {
             "1": {"text": "Display all clients",
                   "key": "1",
-                  "action": None,
+                  "action": self.client_controller.display_all_clients,
                   "role": None
                   },
             "2": {"text": "Find client",
@@ -156,7 +157,7 @@ class MenuController:
             self.MAIN_MENU_OPTIONS
             )
         main_menu = Menu('Main Menu', authorized_options)
-        user_choice = main_menu.display_menu().upper()
+        user_choice = main_menu.display_menu()
         action = authorized_options[user_choice]["action"]
         if action:
             return action()
@@ -166,33 +167,75 @@ class MenuController:
                 return None
             action = authorized_options[user_choice]["action"]
             if action:
-                return action()
+                action()
 
     def display_client_menu(self):
         authorized_options = self.get_authorized_menu_options(
             self.CLIENT_MENU_OPTIONS
             )
-        main_menu = Menu('Main Menu', authorized_options)
-        user_choice = main_menu.display_menu().upper()
+        main_menu = Menu('Client Menu', authorized_options)
+        user_choice = main_menu.display_menu()
         action = authorized_options[user_choice]["action"]
         if action:
-            return action()
+            action()
         while user_choice != "B":
             user_choice = main_menu.display_menu()
-            if user_choice == "B":
-                return None
             action = authorized_options[user_choice]["action"]
-            if action:
+            if user_choice == "B":
                 return action()
+            if action:
+                action()
 
     def display_contract_menu(self):
-        print("contract menu")
+        authorized_options = self.get_authorized_menu_options(
+            self.CONTRACT_MENU_OPTIONS
+            )
+        main_menu = Menu('Contract Menu', authorized_options)
+        user_choice = main_menu.display_menu()
+        action = authorized_options[user_choice]["action"]
+        if action:
+            action()
+        while user_choice != "B":
+            user_choice = main_menu.display_menu()
+            action = authorized_options[user_choice]["action"]
+            if user_choice == "B":
+                return action()
+            if action:
+                action()
 
     def display_event_menu(self):
-        print("event menu")
+        authorized_options = self.get_authorized_menu_options(
+            self.EVENT_MENU_OPTIONS
+            )
+        main_menu = Menu('Event Menu', authorized_options)
+        user_choice = main_menu.display_menu()
+        action = authorized_options[user_choice]["action"]
+        if action:
+            action()
+        while user_choice != "B":
+            user_choice = main_menu.display_menu()
+            action = authorized_options[user_choice]["action"]
+            if user_choice == "B":
+                return action()
+            if action:
+                action()
 
     def display_collaborator_menu(self):
-        print("collaborator menu")
+        authorized_options = self.get_authorized_menu_options(
+            self.COLLAB_MENU_OPTIONS
+            )
+        main_menu = Menu('Collaborator Menu', authorized_options)
+        user_choice = main_menu.display_menu()
+        action = authorized_options[user_choice]["action"]
+        if action:
+            action()
+        while user_choice != "B":
+            user_choice = main_menu.display_menu()
+            action = authorized_options[user_choice]["action"]
+            if user_choice == "B":
+                return action()
+            if action:
+                action()
 
     def get_authorized_menu_options(self, menu_options):
         authorized = {}

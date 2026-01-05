@@ -10,6 +10,7 @@ class Menu:
         self.menu_name = menu_name
 
     def display_menu(self):
+        print("\n")
         print((
            f"{self.menu_name}"
            ))
@@ -17,8 +18,8 @@ class Menu:
         for option in self.options:
             print(f"{self.option_keys[ticker]}: {option}")
             ticker = ticker + 1
-        user_choice = input(">>> ")
-        while user_choice.upper() not in self.option_keys:
+        user_choice = input(">>> ").upper()
+        while user_choice not in self.option_keys:
             print("Please insert a valid option")
             user_choice = input(">>> ")
         return user_choice

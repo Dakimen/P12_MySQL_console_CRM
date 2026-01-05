@@ -1,4 +1,3 @@
-from data_manager.db_connector import make_query
 
 
 class Role:

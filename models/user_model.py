@@ -1,4 +1,4 @@
-from data_manager.db_connector import get_db_connection
+from data_manager.db_choice import data_manager
 
 
 class User:
@@ -11,16 +11,11 @@ class User:
         self.token = token
 
     def save_user_to_db(self):
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
         query = """
         INSERT INTO user (name, email, password_hush)
         VALUES (%s, %s, %s)
         """
-        cursor.execute(query, (self.name, self.email, self.password_hush))
-        connection.commit()
-
-        cursor.close()
-        connection.close()
+        data_manager.make_query(query, (self.name,
+                                        self.email,
+                                        self.password_hush))
         return None
