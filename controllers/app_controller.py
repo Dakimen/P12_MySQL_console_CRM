@@ -2,24 +2,35 @@ from controllers.menu_controllers.login_controller import LoginMenuController
 from controllers.menu_controllers.menu_controller import MenuController
 from controllers.user_controller import UserController
 from controllers.client_controller import ClientController
-from controllers.auth_controller import AuthService
+from controllers.contract_controller import ContractController
+from services.auth_service import AuthService
+from services.client_service import ClientService
 from views.user_view import UserView
 from views.client_view import ClientView
+from views.contract_view import ContractView
 
 
 class AppContext:
     def __init__(self):
         self.auth_service = AuthService()
+        self.client_service = ClientService()
         self.client_view = ClientView()
         self.user_view = UserView()
+        self.contract_view = ContractView()
         self.user_controller = UserController(self.user_view,
                                               self.auth_service)
-        self.client_controller = ClientController(self.client_view)
+        self.client_controller = ClientController(self.client_view,
+                                                  self.client_service,
+                                                  self.auth_service)
+        self.contract_controller = ContractController(self.contract_view,
+                                                      self.client_service,
+                                                      self.auth_service)
         self.login_controller = LoginMenuController(self.user_controller,
                                                     self.auth_service,
                                                     self.user_view)
         self.menu_controller = MenuController(self.auth_service,
-                                              self.client_controller)
+                                              self.client_controller,
+                                              self.contract_controller)
 
 
 class AppController:

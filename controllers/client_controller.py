@@ -1,89 +1,50 @@
-from datetime import datetime
-
-from data_manager.db_choice import data_manager
-from controllers.auth_controller import AuthService
-
-
 class ClientController:
-    def __init__(self, client_view):
+    def __init__(self, client_view, client_service, auth_service):
         self.client_view = client_view
+        self.client_service = client_service
+        self.auth_service = auth_service
 
     def display_all_clients(self):
-        query = """SELECT
-                full_name, email, phone_number
-                company_name, date_created, last_updated
-                FROM client"""
-        results = data_manager.make_query(query, ())
-        for result in results:
-            self.client_view.display_clients(result)
+        clients = self.client_service.get_all_clients()
+        for client in clients:
+            self.client_view.display_clients(client)
 
     def find_client_name(self):
         name = self.client_view.get_client_search_key("full name")
-        query = """SELECT
-                full_name, email, phone_number
-                company_name, date_created, last_updated
-                FROM client
-                WHERE client.full_name = %s"""
-        results = data_manager.make_query(query, (name,))
-        for result in results:
-            self.client_view.display_clients(result)
+        clients = self.client_service.find_by_name(name)
+        for client in clients:
+            self.client_view.display_clients(client)
 
     def find_client_email(self):
         email = self.client_view.get_client_search_key("email")
-        query = """SELECT
-                full_name, email, phone_number
-                company_name, date_created, last_updated
-                FROM client
-                WHERE client.email = %s"""
-        results = data_manager.make_query(query, (email,))
-        for result in results:
-            self.client_view.display_clients(result)
+        clients = self.client_service.find_by_email(email)
+        for client in clients:
+            self.client_view.display_clients(client)
 
     def add_client(self):
-        full_name, email, phone_num, comp = self.client_view.get_info_client()
-        user_id = AuthService.get_user_id()
-        if user_id:
-            query = """
-            INSERT INTO client
-            (full_name, email, phone_number, company_name, commercial_responsible_id)
-            VALUES (%s, %s, %s, %s, UUID_TO_BIN(%s))
-            """
-            data_manager.make_query(query, (full_name, email,
-                                            phone_num, comp, user_id,))
-            self.client_view.client_added_confirmation()
-            return None
+        full_name, email, phone, company = self.client_view.get_info_client()
+        user_id = self.auth_service.get_user_id()
 
-    def display_own_clients(self, user_id):
-        query = """
-        SELECT
-        full_name, email, phone_number,
-        company_name, date_created, last_updated FROM client
-        WHERE commercial_responsible_id = UUID_TO_BIN(%s)
-        """
-        results = data_manager.make_query(query, (user_id,))
-        for result in results:
-            self.client_view.display_clients(result)
+        if not user_id:
+            return
+
+        self.client_service.create_client(
+            full_name, email, phone, company, user_id
+        )
+        self.client_view.client_added_confirmation()
+
+    def display_own_clients(self):
+        user_id = self.auth_service.get_user_id()
+        clients = self.client_service.get_clients_for_user(user_id)
+        for client in clients:
+            self.client_view.display_clients(client)
 
     def update(self):
-        user_id = AuthService.get_user_id()
-        self.display_own_clients(user_id)
-        client_to_change = self.client_view.get_client_name()
-        name, email, phone_num, comp = self.client_view.get_modif_client_info()
-        time_update = datetime.now()
-        query = """
-        UPDATE client
-        SET
-        full_name = %s,
-        email = %s,
-        phone_number = %s,
-        company_name = %s,
-        last_updated = %s
-        WHERE commercial_responsible_id = UUID_TO_BIN(%s)
-        AND full_name = %s
-        """
-        data_manager.make_query(query, (name, email,
-                                        phone_num, comp,
-                                        time_update, user_id,
-                                        client_to_change,))
+        user_id = self.auth_service.get_user_id()
+        self.display_own_clients()
+
+        old_name = self.client_view.get_client_name()
+        new_data = self.client_view.get_modif_client_info()
+
+        self.client_service.update_client(old_name, new_data, user_id)
         self.client_view.client_updated_confirmation()
-        return None

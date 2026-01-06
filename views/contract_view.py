@@ -1,0 +1,2 @@
+class ContractView():
+    pass

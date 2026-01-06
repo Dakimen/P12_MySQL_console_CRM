@@ -2,9 +2,10 @@ from views.menu_view import Menu
 
 
 class MenuController:
-    def __init__(self, auth_service, client_controller):
+    def __init__(self, auth_service, client_controller, contract_controller):
         self.auth_service = auth_service
         self.client_controller = client_controller
+        self.contract_controller = contract_controller
         self.user_token = None
         self.user_roles = None
         self.MAIN_MENU_OPTIONS = {
@@ -87,7 +88,7 @@ class MenuController:
                   },
             "3": {"text": "Create contract",
                   "key": "3",
-                  "action": None,
+                  "action": self.contract_controller.add_contract,
                   "role": ["management responsible"]
                   },
             "4": {"text": "Modify contract",
