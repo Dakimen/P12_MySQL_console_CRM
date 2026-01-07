@@ -7,7 +7,7 @@ class ClientView:
 
     @staticmethod
     def display_clients(result):
-        print("\n")
+        print("")
         print("====================")
         print(f"Name: {result[0]}")
         print(f"Email: {result[1]}")

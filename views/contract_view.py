@@ -13,17 +13,22 @@ class ContractView():
         print("Something went wrong, try again")
 
     def get_client(self):
-        print("To add contract please enter client's name:")
+        print("Please enter client's name:")
         client_name = input(">>> ")
         print("And his email:")
         email = input(">>> ")
         return client_name, email
 
+    def get_responsible(self):
+        print("Please enter the name of the commercial responsible:")
+        name = input(">>> ")
+        return name
+
     def get_date_created(self):
         print("Please enter the date of the contract's creation")
         date = ""
         while not re.match(self.dateformat, date):
-            print("Follow the following format: dd/mm/yyyy")
+            print("Use the following format: dd/mm/yyyy")
             date = input(">>> ")
         return date
 
@@ -31,14 +36,14 @@ class ContractView():
         print("Please enter the date when the contract was signed")
         date = ""
         while not re.match(self.dateformat, date):
-            print("Follow the following format: dd/mm/yyyy")
+            print("Use the following format: dd/mm/yyyy")
             date = input(">>> ")
         return date
 
     def get_sum(self):
         amount = ""
         while not re.match(self.monetary_format, amount):
-            print("Please enter only numbers, ex: 6500")
+            print("Enter only numbers, ex: 6500")
             amount = input(">>> ")
         return amount
 
@@ -82,7 +87,7 @@ class ContractView():
         return full, paid, created, signed
 
     def display_contract_info(self, contract):
-        print("\n")
+        print("")
         print("====================")
         print(f"Amount full: {contract[0]}")
         print(f"Amount remaining: {contract[1]}")
@@ -94,3 +99,12 @@ class ContractView():
         print(f"Commercial Responsible: {contract[4]}")
         print(f"Client name: {contract[5]}")
         print("====================")
+
+    def display_modif(self):
+        print("Please enter the values of the contract to modify:")
+
+    def display_modif_new(self):
+        print("Please enter the contract's new informations:")
+
+    def update_success(self):
+        print("Contract updated successfully!")

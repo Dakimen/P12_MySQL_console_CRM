@@ -26,3 +26,31 @@ class ContractService:
         ON contract.client_id = client.id
         """
         return data_manager.make_query(query, ())
+
+    def get_contracts_client(self, cli_id, com_id):
+        query = """
+        SELECT contract.amount_total, contract.amount_remaining,
+        contract.created_at, contract.signed, user.name, client.full_name,
+        client.email
+        FROM contract
+        JOIN user
+        ON contract.commercial_responsible_id = user.id
+        JOIN client
+        ON contract.client_id = client.id
+        WHERE client.id = UUID_TO_BIN(%s) AND client.commercial_responsible_id = UUID_TO_BIN(%s)
+        """
+        return data_manager.make_query(query, (cli_id, com_id))
+
+    def update_contract(self, full, remaining, created, signed, client, resp):
+        query = """
+        UPDATE contract
+        SET
+            amount_total = %s,
+            amount_remaining = %s,
+            created_at = %s,
+            signed = %s
+        WHERE commercial_responsible_id = UUID_TO_BIN(%s)
+          AND client_id = UUID_TO_BIN(%s)
+        """
+        return data_manager.make_query(query, (full, remaining, created,
+                                               signed, resp, client))

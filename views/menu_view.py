@@ -10,7 +10,7 @@ class Menu:
         self.menu_name = menu_name
 
     def display_menu(self):
-        print("\n")
+        print("")
         print((
            f"{self.menu_name}"
            ))

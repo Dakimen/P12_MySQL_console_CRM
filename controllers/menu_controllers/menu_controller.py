@@ -83,7 +83,7 @@ class MenuController:
                   },
             "2": {"text": "Find contract",
                   "key": "2",
-                  "action": None,
+                  "action": self.contract_controller.find_contract,
                   "role": None
                   },
             "3": {"text": "Create contract",
@@ -93,12 +93,12 @@ class MenuController:
                   },
             "4": {"text": "Modify contract",
                   "key": "4",
-                  "action": None,
+                  "action": self.contract_controller.modif_contract,
                   "role": ["management responsible", "commercial responsible"]
                   },
             "5": {"text": "Filter contracts",
                   "key": "5",
-                  "action": None,
+                  "action": self.contract_controller.filter_contracts,
                   "role": ["commercial responsible"]
                   },
             "B": {"text": "Back to previous menu",
