@@ -78,7 +78,7 @@ class MenuController:
         self.CONTRACT_MENU_OPTIONS = {
             "1": {"text": "Display all contracts",
                   "key": "1",
-                  "action": None,
+                  "action": self.contract_controller.show_all,
                   "role": None
                   },
             "2": {"text": "Find contract",

@@ -35,18 +35,14 @@ class ContractView():
             date = input(">>> ")
         return date
 
-    def get_contract_details(self):
-        print("Please enter full amount agreed on:")
-        full = ""
-        while not re.match(self.monetary_format, full):
+    def get_sum(self):
+        amount = ""
+        while not re.match(self.monetary_format, amount):
             print("Please enter only numbers, ex: 6500")
-            full = input(">>> ")
-        print("Please enter the amount paid:")
-        paid = ""
-        while not re.match(self.monetary_format, paid):
-            print("Please enter only numbers, ex: 6500")
-            paid = input(">>> ")
-        created = self.get_date_created()
+            amount = input(">>> ")
+        return amount
+
+    def get_signed(self):
         decision = False
         while decision is False:
             print("Was the contract signed? Y/N")
@@ -57,4 +53,44 @@ class ContractView():
             signed = self.get_date_signed()
         else:
             signed = None
+        return signed
+
+    def get_paid_not_exceeding_full(self, full):
+        print("ATTENTION: The amount paid exceeds the full price")
+        print(f"Please enter the amount paid not exceeding {full}")
+        while True:
+            paid = input(">>> ")
+
+            if not re.fullmatch(self.monetary_format, paid):
+                print("Please enter only numbers")
+                continue
+
+            if int(paid) > int(full):
+                print("Amount exceeds full price. Try again.")
+                continue
+            return paid
+
+    def get_contract_details(self):
+        print("Please enter full amount agreed on:")
+        full = self.get_sum()
+        print("Please enter the amount paid:")
+        paid = self.get_sum()
+        if int(paid) > int(paid):
+            paid = self.get_paid_not_exceeding_full(full)
+        created = self.get_date_created()
+        signed = self.get_signed()
         return full, paid, created, signed
+
+    def display_contract_info(self, contract):
+        print("\n")
+        print("====================")
+        print(f"Amount full: {contract[0]}")
+        print(f"Amount remaining: {contract[1]}")
+        print(f"Creation date: {contract[2]}")
+        if contract[3] is not None:
+            print(f"Signed: {contract[3]}")
+        else:
+            print("Signed: No")
+        print(f"Commercial Responsible: {contract[4]}")
+        print(f"Client name: {contract[5]}")
+        print("====================")

@@ -39,3 +39,8 @@ class ContractController:
                                                   signed, com_id, client_id)
             self.contract_view.contract_created()
             return None
+
+    def show_all(self):
+        results = self.contract_service.get_all()
+        for result in results:
+            self.contract_view.display_contract_info(result)
