@@ -54,3 +54,33 @@ class ContractService:
         """
         return data_manager.make_query(query, (full, remaining, created,
                                                signed, resp, client))
+
+    def filter_by_not_signed(self, user_id):
+        query = """
+        SELECT contract.amount_total, contract.amount_remaining,
+        contract.created_at, contract.signed, user.name, client.full_name,
+        client.email
+        FROM contract
+        JOIN user
+        ON contract.commercial_responsible_id = user.id
+        JOIN client
+        ON contract.client_id = client.id
+        WHERE client.commercial_responsible_id = UUID_TO_BIN(%s)
+        AND contract.signed IS NULL
+        """
+        return data_manager.make_query(query, (user_id,))
+
+    def filter_by_not_paid_off(self, user_id):
+        query = """
+        SELECT contract.amount_total, contract.amount_remaining,
+        contract.created_at, contract.signed, user.name, client.full_name,
+        client.email
+        FROM contract
+        JOIN user
+        ON contract.commercial_responsible_id = user.id
+        JOIN client
+        ON contract.client_id = client.id
+        WHERE client.commercial_responsible_id = UUID_TO_BIN(%s)
+        AND contract.amount_remaining != 0
+        """
+        return data_manager.make_query(query, (user_id,))

@@ -98,7 +98,7 @@ class MenuController:
                   },
             "5": {"text": "Filter contracts",
                   "key": "5",
-                  "action": self.contract_controller.filter_contracts,
+                  "action": self.find_contract_filter_router,
                   "role": ["commercial responsible"]
                   },
             "B": {"text": "Back to previous menu",
@@ -106,6 +106,17 @@ class MenuController:
                   "action": self.display_main_menu,
                   "role": None
                   }
+        }
+        self.CONTRACT_FILTER_OPTIONS = {
+            "1": {"text": "Filter by not signed",
+                  "key": "1",
+                  "action": self.contract_controller.filter_not_signed},
+            "2": {"text": "Filter by not fully paid",
+                  "key": "2",
+                  "action": self.contract_controller.filter_not_paid},
+            "B": {"text": "Back to previous menu",
+                  "key": "B",
+                  "action": None}
         }
         self.EVENT_MENU_OPTIONS = {
             "1": {"text": "Display all events",
@@ -197,6 +208,9 @@ class MenuController:
             self.CONTRACT_MENU_OPTIONS
             )
         self.display_menu('Contract Menu', authorized_options)
+
+    def find_contract_filter_router(self):
+        self.display_menu("Client search", self.CONTRACT_FILTER_OPTIONS)
 
     def display_event_menu(self):
         authorized_options = self.get_authorized_menu_options(

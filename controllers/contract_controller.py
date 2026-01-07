@@ -71,5 +71,14 @@ class ContractController:
                                               signed, client, resp)
         self.contract_view.update_success()
 
-    def filter_contracts(self):
-        pass
+    def filter_not_signed(self):
+        user_id = self.auth_service.get_user_id()
+        results = self.contract_service.filter_by_not_signed(user_id)
+        for result in results:
+            self.contract_view.display_contract_info(result)
+
+    def filter_not_paid(self):
+        user_id = self.auth_service.get_user_id()
+        results = self.contract_service.filter_by_not_paid_off(user_id)
+        for result in results:
+            self.contract_view.display_contract_info(result)
