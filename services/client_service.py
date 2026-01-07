@@ -71,3 +71,12 @@ class ClientService:
             query,
             (name, email, phone, company, datetime.now(), user_id, old_name)
         )
+
+    def get_client_with_responsible(self, name, email):
+        query = """
+        SELECT
+        BIN_TO_UUID(id), BIN_TO_UUID(commercial_responsible_id)
+        FROM client
+        WHERE full_name = %s AND email = %s
+        """
+        return data_manager.make_query(query, (name, email))

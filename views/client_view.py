@@ -68,3 +68,7 @@ class ClientView:
         print("Client updated successfully!")
         print(("Please verify that information "
                "was added correctly through client search"))
+
+    @staticmethod
+    def client_not_found():
+        print("Client not found!")

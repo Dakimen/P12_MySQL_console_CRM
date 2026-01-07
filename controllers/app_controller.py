@@ -8,12 +8,14 @@ from services.client_service import ClientService
 from views.user_view import UserView
 from views.client_view import ClientView
 from views.contract_view import ContractView
+from services.contract_service import ContractService
 
 
 class AppContext:
     def __init__(self):
         self.auth_service = AuthService()
         self.client_service = ClientService()
+        self.contract_service = ContractService()
         self.client_view = ClientView()
         self.user_view = UserView()
         self.contract_view = ContractView()
@@ -24,7 +26,8 @@ class AppContext:
                                                   self.auth_service)
         self.contract_controller = ContractController(self.contract_view,
                                                       self.client_service,
-                                                      self.auth_service)
+                                                      self.auth_service,
+                                                      self.contract_service)
         self.login_controller = LoginMenuController(self.user_controller,
                                                     self.auth_service,
                                                     self.user_view)
