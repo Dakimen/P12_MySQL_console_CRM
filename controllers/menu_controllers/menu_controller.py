@@ -2,10 +2,12 @@ from views.menu_view import Menu
 
 
 class MenuController:
-    def __init__(self, auth_service, client_controller, contract_controller):
+    def __init__(self, auth_service, client_controller,
+                 contract_controller, event_controller):
         self.auth_service = auth_service
         self.client_controller = client_controller
         self.contract_controller = contract_controller
+        self.event_controller = event_controller
         self.user_token = None
         self.user_roles = None
         self.MAIN_MENU_OPTIONS = {
@@ -121,7 +123,7 @@ class MenuController:
         self.EVENT_MENU_OPTIONS = {
             "1": {"text": "Display all events",
                   "key": "1",
-                  "action": None,
+                  "action": self.event_controller.display_all,
                   "role": None
                   },
             "2": {"text": "Find event",
@@ -131,7 +133,7 @@ class MenuController:
                   },
             "3": {"text": "Create event",
                   "key": "3",
-                  "action": None,
+                  "action": self.event_controller.create_event,
                   "role": ["commercial responsible"]
                   },
             "4": {"text": "Modify event",

@@ -41,6 +41,20 @@ class ContractService:
         """
         return data_manager.make_query(query, (cli_id, com_id))
 
+    def get_contract_for_event(self, name, email, resp_id):
+        query = """
+        SELECT
+            BIN_TO_UUID(contract.id)
+        FROM contract
+        JOIN client
+        ON contract.client_id = client.id
+        WHERE client.full_name = %s
+        AND client.email = %s
+        AND contract.commercial_responsible_id = UUID_TO_BIN(%s)
+        """
+        return data_manager.make_query(query, (name, email, resp_id))
+
+
     def update_contract(self, full, remaining, created, signed, client, resp):
         query = """
         UPDATE contract
