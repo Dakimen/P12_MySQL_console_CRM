@@ -57,6 +57,18 @@ class EventView:
                 continue
             return attendees
 
+    def get_client_data(self):
+        print("Please enter the client's full name")
+        client_name = input(">>> ")
+        print("Please enter the client's email")
+        client_email = input(">>> ")
+        return client_name, client_email
+
+    def get_new_responsible_email(self):
+        print("Please enter the new support responsible's email:")
+        email = input(">>> ")
+        return email
+
     def get_event_data(self):
         print("")
         start, end = self.get_start_and_end()
@@ -65,10 +77,18 @@ class EventView:
         attendees = self.get_attendees()
         print("Please enter any notes on this event (optional):")
         notes = input(">>> ")
-        print("Please enter the client's full name")
-        client_name = input(">>> ")
-        print("Please enter the client's email")
-        client_email = input(">>> ")
-        data = (start, end, location, attendees,
-                notes, client_name, client_email)
+        data = (start, end, location, attendees, notes)
         return data
+
+    def event_search(self):
+        print("Event search")
+
+    def modif_start(self):
+        print("Event modification")
+        print("Enter the following information to find the event to modify")
+
+    def modif_new(self):
+        print("Enter the following informations as new event information")
+
+    def modif_end(self):
+        print("Event information modified successfully")

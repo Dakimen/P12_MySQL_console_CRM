@@ -23,22 +23,23 @@ class ContractController:
             return None
 
     def get_cont_values(self):
-        full, paid, created, signed = self.contract_view.get_contract_details()
+        full, paid, signed = self.contract_view.get_contract_details()
         try:
             remaining = int(full) - int(paid)
         except ValueError:
             self.contract_view.something_went_wrong()
             return None
-        created = datetime.strptime(created, "%d/%m/%Y")
         if signed:
             signed = datetime.strptime(signed, "%d/%m/%Y")
-        return full, remaining, created, signed
+        return full, remaining, signed
 
     def get_contract_info(self):
         client = self.find_client_for_contract()
         if client:
             client_id, com_id = client[0]
-            full, remaining, created, signed = self.get_cont_values()
+            full, remaining, signed = self.get_cont_values()
+            created = self.contract_view.get_date_created()
+            created = datetime.strptime(created, "%d/%m/%Y")
             return full, remaining, created, signed, com_id, client_id
 
     def add_contract(self):
@@ -65,8 +66,10 @@ class ContractController:
     def modif_contract(self):
         self.contract_view.display_modif()
         client, resp = self.find_contract()
+        created = self.contract_view.get_date_created()
+        created = datetime.strptime(created, "%d/%m/%Y")
         self.contract_view.display_modif_new()
-        full, remaining, created, signed = self.get_cont_values()
+        full, remaining, signed = self.get_cont_values()
         self.contract_service.update_contract(full, remaining, created,
                                               signed, client, resp)
         self.contract_view.update_success()

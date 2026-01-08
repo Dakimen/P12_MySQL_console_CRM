@@ -39,7 +39,8 @@ class AppContext:
         self.event_controller = EventController(self.event_view,
                                                 self.auth_service,
                                                 self.event_service,
-                                                self.contract_service)
+                                                self.contract_service,
+                                                self.contract_view)
         self.menu_controller = MenuController(self.auth_service,
                                               self.client_controller,
                                               self.contract_controller,

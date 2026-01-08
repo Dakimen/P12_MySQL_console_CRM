@@ -128,7 +128,7 @@ class MenuController:
                   },
             "2": {"text": "Find event",
                   "key": "2",
-                  "action": None,
+                  "action": self.event_controller.find_event,
                   "role": None
                   },
             "3": {"text": "Create event",
@@ -138,7 +138,7 @@ class MenuController:
                   },
             "4": {"text": "Modify event",
                   "key": "4",
-                  "action": None,
+                  "action": self.event_controller.modify_event,
                   "role": ["support responsible", "management responsible"]
                   },
             "5": {"text": "Filter events",

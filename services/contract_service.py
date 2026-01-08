@@ -41,7 +41,7 @@ class ContractService:
         """
         return data_manager.make_query(query, (cli_id, com_id))
 
-    def get_contract_for_event(self, name, email, resp_id):
+    def get_contract_for_event(self, name, email, resp_id, signed):
         query = """
         SELECT
             BIN_TO_UUID(contract.id)
@@ -51,9 +51,22 @@ class ContractService:
         WHERE client.full_name = %s
         AND client.email = %s
         AND contract.commercial_responsible_id = UUID_TO_BIN(%s)
+        AND contract.signed = %s
         """
-        return data_manager.make_query(query, (name, email, resp_id))
+        return data_manager.make_query(query, (name, email, resp_id, signed))
 
+    def get_contract_event_upd(self, name, email, created):
+        query = """
+        SELECT
+            BIN_TO_UUID(contract.id)
+        FROM contract
+        JOIN client
+        ON contract.client_id = client.id
+        WHERE client.full_name = %s
+        AND client.email = %s
+        AND created_at = %s
+        """
+        return data_manager.make_query(query, (name, email, created))
 
     def update_contract(self, full, remaining, created, signed, client, resp):
         query = """
@@ -61,13 +74,13 @@ class ContractService:
         SET
             amount_total = %s,
             amount_remaining = %s,
-            created_at = %s,
             signed = %s
         WHERE commercial_responsible_id = UUID_TO_BIN(%s)
           AND client_id = UUID_TO_BIN(%s)
+          AND created_at = %s
         """
-        return data_manager.make_query(query, (full, remaining, created,
-                                               signed, resp, client))
+        return data_manager.make_query(query, (full, remaining,
+                                               signed, resp, client, created))
 
     def filter_by_not_signed(self, user_id):
         query = """

@@ -82,9 +82,8 @@ class ContractView():
         paid = self.get_sum()
         if int(paid) > int(paid):
             paid = self.get_paid_not_exceeding_full(full)
-        created = self.get_date_created()
         signed = self.get_signed()
-        return full, paid, created, signed
+        return full, paid, signed
 
     def display_contract_info(self, contract):
         print("")
