@@ -60,7 +60,7 @@ class MenuController:
                   },
             "B": {"text": "Back to previous menu",
                   "key": "B",
-                  "action": self.display_main_menu,
+                  "action": None,
                   "role": None
                   }
         }
@@ -105,7 +105,7 @@ class MenuController:
                   },
             "B": {"text": "Back to previous menu",
                   "key": "B",
-                  "action": self.display_main_menu,
+                  "action": None,
                   "role": None
                   }
         }
@@ -143,39 +143,62 @@ class MenuController:
                   },
             "5": {"text": "Filter events",
                   "key": "5",
-                  "action": None,
+                  "action": self.find_event_filter_router,
                   "role": ["support responsible", "management responsible"]
                   },
             "B": {"text": "Back to previous menu",
                   "key": "B",
-                  "action": self.display_main_menu,
+                  "action": None,
+                  "role": None
+                  }
+        }
+        self.EVENT_FILTER_OPTIONS = {
+            "1": {"text": "Display my events",
+                  "key": "1",
+                  "action": self.event_controller.filter_own_events,
+                  "role": ["support responsible"]
+                  },
+            "2": {"text": "Display events without support",
+                  "key": "2",
+                  "action": self.event_controller.filter_no_support,
+                  "role": ["management responsible"]
+                  },
+            "B": {"text": "Back to previous menu",
+                  "key": "B",
+                  "action": None,
                   "role": None
                   }
         }
         self.COLLAB_MENU_OPTIONS = {
             "1": {"text": "Display all collaborators",
                   "key": "1",
-                  "action": None
+                  "action": None,
+                  "role": ["management responsible"]
                   },
             "2": {"text": "Find collaborator",
                   "key": "2",
-                  "action": None
+                  "action": None,
+                  "role": ["management responsible"]
                   },
             "3": {"text": "Add collaborator",
                   "key": "3",
-                  "action": None
+                  "action": None,
+                  "role": ["management responsible"]
                   },
             "4": {"text": "Modify collaborator",
                   "key": "4",
-                  "action": None
+                  "action": None,
+                  "role": ["management responsible"]
                   },
             "5": {"text": "Delete collaborator",
                   "key": "5",
-                  "action": None
+                  "action": None,
+                  "role": ["management responsible"]
                   },
             "B": {"text": "Back to previous menu",
                   "key": "B",
-                  "action": self.display_main_menu
+                  "action": None,
+                  "role": None
                   }
         }
 
@@ -187,7 +210,7 @@ class MenuController:
         user_choice = main_menu.display_menu()
         action = authorized_options[user_choice]["action"]
         if action:
-            return action()
+            action()
         while user_choice != "Q":
             user_choice = main_menu.display_menu()
             if user_choice == "Q":
@@ -212,13 +235,19 @@ class MenuController:
         self.display_menu('Contract Menu', authorized_options)
 
     def find_contract_filter_router(self):
-        self.display_menu("Client search", self.CONTRACT_FILTER_OPTIONS)
+        self.display_menu("Contract search", self.CONTRACT_FILTER_OPTIONS)
 
     def display_event_menu(self):
         authorized_options = self.get_authorized_menu_options(
             self.EVENT_MENU_OPTIONS
             )
         self.display_menu('Event Menu', authorized_options)
+
+    def find_event_filter_router(self):
+        authorized_options = self.get_authorized_menu_options(
+            self.EVENT_FILTER_OPTIONS
+            )
+        self.display_menu('Event search', authorized_options)
 
     def display_collaborator_menu(self):
         authorized_options = self.get_authorized_menu_options(
@@ -254,9 +283,6 @@ class MenuController:
             user_choice = menu.display_menu()
             action = authorized_options[user_choice]["action"]
             if user_choice == "B":
-                if action is not None:
-                    return action()
-                else:
-                    return None
+                return None
             if action:
                 action()

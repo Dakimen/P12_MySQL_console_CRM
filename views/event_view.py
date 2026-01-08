@@ -21,7 +21,10 @@ class EventView:
         print(f"Number of attendees: {event[3]}")
         if event[4]:
             print(f"Notes: {event[4]}")
-        print(f"Support: {event[6]}")
+        try:
+            print(f"Support: {event[6]}")
+        except IndexError:
+            print("Support: Unassigned")
         print("====================")
 
     def get_datetime(self):

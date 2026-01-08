@@ -34,3 +34,42 @@ class EventService:
         return data_manager.make_query(query, (start, end, location,
                                                attendees, notes,
                                                contract_id))
+
+    def get_all_own(self, user_id):
+        query = """
+        SELECT
+            event.event_start,
+            event.event_end,
+            event.location,
+            event.attendees,
+            event.notes,
+            client.full_name,
+            user.name
+        FROM event
+        JOIN contract
+            ON event.contract_id = contract.id
+        JOIN client
+            ON contract.client_id = client.id
+        JOIN user
+            ON event.support_id = user.id
+        WHERE event.support_id = UUID_TO_BIN(%s)
+        """
+        return data_manager.make_query(query, (user_id,))
+
+    def get_all_no_support(self):
+        query = """
+        SELECT
+            event.event_start,
+            event.event_end,
+            event.location,
+            event.attendees,
+            event.notes,
+            client.full_name
+        FROM event
+        JOIN contract
+            ON event.contract_id = contract.id
+        JOIN client
+            ON contract.client_id = client.id
+        WHERE event.support_id IS NULL
+        """
+        return data_manager.make_query(query, ())

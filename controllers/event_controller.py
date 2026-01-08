@@ -25,3 +25,14 @@ class EventController:
         else:
             self.event_view.contract_not_found()
             return None
+
+    def filter_own_events(self):
+        user_id = self.auth_service.get_user_id()
+        results = self.event_service.get_all_own(user_id)
+        for result in results:
+            self.event_view.display_event(result)
+
+    def filter_no_support(self):
+        results = self.event_service.get_all_no_support()
+        for result in results:
+            self.event_view.display_event(result)
