@@ -3,11 +3,13 @@ from views.menu_view import Menu
 
 class MenuController:
     def __init__(self, auth_service, client_controller,
-                 contract_controller, event_controller):
+                 contract_controller, event_controller,
+                 collab_controller):
         self.auth_service = auth_service
         self.client_controller = client_controller
         self.contract_controller = contract_controller
         self.event_controller = event_controller
+        self.collab_controller = collab_controller
         self.user_token = None
         self.user_roles = None
         self.MAIN_MENU_OPTIONS = {
@@ -29,7 +31,7 @@ class MenuController:
             "4": {"text": "Collaborator Menu",
                   "key": "4",
                   "action": self.display_collaborator_menu,
-                  "role": ["management responsible"]
+                  "role": None
                   },
             "Q": {"text": "Quit programme",
                   "key": "Q",
@@ -170,30 +172,47 @@ class MenuController:
                   }
         }
         self.COLLAB_MENU_OPTIONS = {
-            "1": {"text": "Display all collaborators",
+            "1": {"text": "Change password",
                   "key": "1",
-                  "action": None,
-                  "role": ["management responsible"]
+                  "action": self.collab_controller.change_password,
+                  "role": None
                   },
-            "2": {"text": "Find collaborator",
+            "2": {"text": "Display all collaborators",
                   "key": "2",
-                  "action": None,
+                  "action": self.collab_controller.get_all,
                   "role": ["management responsible"]
                   },
             "3": {"text": "Add collaborator",
                   "key": "3",
-                  "action": None,
+                  "action": self.collab_controller.add_collab,
                   "role": ["management responsible"]
                   },
             "4": {"text": "Modify collaborator",
                   "key": "4",
-                  "action": None,
+                  "action": self.find_collab_modif_router,
                   "role": ["management responsible"]
                   },
-            "5": {"text": "Delete collaborator",
-                  "key": "5",
+            "B": {"text": "Back to previous menu",
+                  "key": "B",
                   "action": None,
-                  "role": ["management responsible"]
+                  "role": None
+                  }
+        }
+        self.COLLAB_MODIF_OPTIONS = {
+            "1": {"text": "Modify collaborator's name",
+                  "key": "1",
+                  "action": self.collab_controller.modif_name,
+                  "role": None
+                  },
+            "2": {"text": "Modify collaborator's email",
+                  "key": "2",
+                  "action": self.collab_controller.modif_email,
+                  "role": None
+                  },
+            "3": {"text": "Assign role to collaborator",
+                  "key": "3",
+                  "action": self.collab_controller.assign_role,
+                  "role": None
                   },
             "B": {"text": "Back to previous menu",
                   "key": "B",
@@ -203,9 +222,7 @@ class MenuController:
         }
 
     def display_main_menu(self):
-        authorized_options = self.get_authorized_menu_options(
-            self.MAIN_MENU_OPTIONS
-            )
+        authorized_options = self.MAIN_MENU_OPTIONS
         main_menu = Menu('Main Menu', authorized_options)
         user_choice = main_menu.display_menu()
         action = authorized_options[user_choice]["action"]
@@ -254,6 +271,12 @@ class MenuController:
             self.COLLAB_MENU_OPTIONS
             )
         self.display_menu('Collaborator Menu', authorized_options)
+
+    def find_collab_modif_router(self):
+        authorized_options = self.get_authorized_menu_options(
+            self.COLLAB_MODIF_OPTIONS
+            )
+        self.display_menu('Event search', authorized_options)
 
     def get_authorized_menu_options(self, menu_options):
         authorized = {}

@@ -1,4 +1,3 @@
-from models.user_model import User
 from data_manager.db_choice import data_manager
 
 
@@ -7,13 +6,6 @@ class UserController:
     def __init__(self, user_view, auth_service):
         self.view = user_view
         self.auth_service = auth_service
-
-    def user_creation_controller(self):
-        email, name, pass_hush = self.view.add_user_view()
-        user = User(email, name, pass_hush)
-        user.save_user_to_db()
-        self.view.account_created_info()
-        return None
 
     def find_user_by_email(self, email, password):
         query = """

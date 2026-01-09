@@ -11,8 +11,8 @@ class UserView:
         print("Username:")
         name = input(">>> ")
         password = getpass.getpass()
-        password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        return login_email, name, password_hash
+        password_hush = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        return login_email, name, password_hush
 
     def login_view(self):
         print("Login.")

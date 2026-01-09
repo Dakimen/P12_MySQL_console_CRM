@@ -4,6 +4,7 @@ from controllers.user_controller import UserController
 from controllers.client_controller import ClientController
 from controllers.contract_controller import ContractController
 from controllers.event_controller import EventController
+from controllers.collaborator_controller import CollaboratorController
 from services.auth_service import AuthService
 from services.client_service import ClientService
 from services.event_service import EventService
@@ -12,6 +13,8 @@ from views.client_view import ClientView
 from views.contract_view import ContractView
 from services.contract_service import ContractService
 from views.event_view import EventView
+from views.collab_view import CollaboratorView
+from services.collaborator_service import CollaboratorService
 
 
 class AppContext:
@@ -23,9 +26,14 @@ class AppContext:
         self.user_view = UserView()
         self.contract_view = ContractView()
         self.event_view = EventView()
+        self.collab_view = CollaboratorView()
         self.event_service = EventService()
+        self.collab_service = CollaboratorService()
         self.user_controller = UserController(self.user_view,
                                               self.auth_service)
+        self.collab_controller = CollaboratorController(self.auth_service,
+                                                        self.collab_view,
+                                                        self.collab_service)
         self.client_controller = ClientController(self.client_view,
                                                   self.client_service,
                                                   self.auth_service)
@@ -44,7 +52,8 @@ class AppContext:
         self.menu_controller = MenuController(self.auth_service,
                                               self.client_controller,
                                               self.contract_controller,
-                                              self.event_controller)
+                                              self.event_controller,
+                                              self.collab_controller)
 
 
 class AppController:
