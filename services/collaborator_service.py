@@ -66,3 +66,18 @@ class CollaboratorService:
         AND role.title = %s
         """
         return data_manager.make_query(query, (email, role_choice))
+
+    def get_user_by_email(self, email):
+        query = """
+            SELECT
+                BIN_TO_UUID(user.id),
+                user.password_hush,
+                role.title
+            FROM user
+            JOIN user_role_assignment
+                ON user_role_assignment.user_id = user.id
+            JOIN role
+                ON user_role_assignment.role_id = role.id
+            WHERE user.email = %s
+        """
+        return data_manager.make_query(query, (email,))

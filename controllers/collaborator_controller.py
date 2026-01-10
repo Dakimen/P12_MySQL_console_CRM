@@ -46,3 +46,13 @@ class CollaboratorController:
         role_choice = self.collab_view.get_role()
         self.collab_service.assign_role(email, role_choice)
         return self.collab_view.role_assigned()
+
+    def find_user_by_email(self, email, password):
+        results = self.collab_service.get_user_by_email(email)
+        if not results:
+            return None, None
+        user_id, stored_hush, _ = results[0]
+        if not self.auth_service.check_password(password, stored_hush):
+            return None, None
+        role_titles = [row[2] for row in results]
+        return user_id, role_titles

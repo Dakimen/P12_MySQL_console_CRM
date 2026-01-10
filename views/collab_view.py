@@ -83,3 +83,17 @@ class CollaboratorView:
         else:
             role_choice = "support responsible"
         return role_choice
+
+    def login_view(self):
+        print("Login.")
+        print("Please enter your email:")
+        email = input(">>> ")
+        password = getpass.getpass()
+        return email, password
+
+    def connection_success(self):
+        print("Connection success!")
+        return None
+
+    def connection_failure(self):
+        print("Connection unsuccessful or the account wasn't approved yet!")

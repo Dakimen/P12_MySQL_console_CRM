@@ -3,8 +3,8 @@ from views.menu_view import Menu
 
 class LoginMenuController:
 
-    def __init__(self, user_controller, auth_service, user_view):
-        self.user_controller = user_controller
+    def __init__(self, collab_controller, auth_service, user_view):
+        self.collab_controller = collab_controller
         self.auth_service = auth_service
         self.user_view = user_view
         self.LOGIN_MENU_OPTIONS = {
@@ -42,8 +42,8 @@ class LoginMenuController:
 
     def login_controller(self):
         email, password = self.user_view.login_view()
-        user_id, roles = self.user_controller.find_user_by_email(email,
-                                                                 password)
+        user_id, roles = self.collab_controller.find_user_by_email(email,
+                                                                   password)
         if not user_id:
             self.user_view.connection_failure()
         else:

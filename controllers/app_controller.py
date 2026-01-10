@@ -1,6 +1,5 @@
 from controllers.menu_controllers.login_controller import LoginMenuController
 from controllers.menu_controllers.menu_controller import MenuController
-from controllers.user_controller import UserController
 from controllers.client_controller import ClientController
 from controllers.contract_controller import ContractController
 from controllers.event_controller import EventController
@@ -8,7 +7,6 @@ from controllers.collaborator_controller import CollaboratorController
 from services.auth_service import AuthService
 from services.client_service import ClientService
 from services.event_service import EventService
-from views.user_view import UserView
 from views.client_view import ClientView
 from views.contract_view import ContractView
 from services.contract_service import ContractService
@@ -23,14 +21,11 @@ class AppContext:
         self.client_service = ClientService()
         self.contract_service = ContractService()
         self.client_view = ClientView()
-        self.user_view = UserView()
         self.contract_view = ContractView()
         self.event_view = EventView()
         self.collab_view = CollaboratorView()
         self.event_service = EventService()
         self.collab_service = CollaboratorService()
-        self.user_controller = UserController(self.user_view,
-                                              self.auth_service)
         self.collab_controller = CollaboratorController(self.auth_service,
                                                         self.collab_view,
                                                         self.collab_service)
@@ -41,9 +36,9 @@ class AppContext:
                                                       self.client_service,
                                                       self.auth_service,
                                                       self.contract_service)
-        self.login_controller = LoginMenuController(self.user_controller,
+        self.login_controller = LoginMenuController(self.collab_controller,
                                                     self.auth_service,
-                                                    self.user_view)
+                                                    self.collab_view)
         self.event_controller = EventController(self.event_view,
                                                 self.auth_service,
                                                 self.event_service,
