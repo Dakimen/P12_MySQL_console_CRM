@@ -1,14 +1,14 @@
-from data_manager.db_choice import data_manager
+from services.base_service import BaseService
 
 
-class CollaboratorService:
+class CollaboratorService(BaseService):
     def get_pass_hush(self, user_id):
         query = """
         SELECT password_hush
         FROM user
         WHERE id = UUID_TO_BIN(%s)
         """
-        return data_manager.make_query(query, (user_id,))
+        return self._fetch_one(query, (user_id,))
 
     def set_new_pass(self, user_id, new_hush):
         query = """
@@ -16,7 +16,7 @@ class CollaboratorService:
         SET password_hush = %s
         WHERE user.id = UUID_TO_BIN(%s)
         """
-        return data_manager.make_query(query, (new_hush, user_id))
+        return self._execute(query, (new_hush, user_id))
 
     def get_all(self):
         query = """
@@ -30,15 +30,14 @@ class CollaboratorService:
         LEFT JOIN role
             ON user_role_assignment.role_id = role.id;
         """
-        return data_manager.make_query(query, ())
+        return self._fetch_all(query, ())
 
     def save_user_to_db(self, name, email, hush):
         query = """
         INSERT INTO user (name, email, password_hush)
         VALUES (%s, %s, %s)
         """
-        data_manager.make_query(query, (name, email, hush))
-        return None
+        return self._execute(query, (name, email, hush))
 
     def update_user_name(self, name, email):
         query = """
@@ -46,7 +45,7 @@ class CollaboratorService:
         SET name = %s
         WHERE email = %s
         """
-        return data_manager.make_query(query, (name, email))
+        return self._execute(query, (name, email))
 
     def update_user_email(self, email, name):
         query = """
@@ -54,7 +53,7 @@ class CollaboratorService:
         SET email = %s
         WHERE name = %s
         """
-        return data_manager.make_query(query, (email, name))
+        return self._execute(query, (email, name))
 
     def assign_role(self, email, role_choice):
         query = """
@@ -65,7 +64,7 @@ class CollaboratorService:
         WHERE user.email = %s
         AND role.title = %s
         """
-        return data_manager.make_query(query, (email, role_choice))
+        return self._execute(query, (email, role_choice))
 
     def get_user_by_email(self, email):
         query = """
@@ -80,4 +79,4 @@ class CollaboratorService:
                 ON user_role_assignment.role_id = role.id
             WHERE user.email = %s
         """
-        return data_manager.make_query(query, (email,))
+        return self._fetch_one(query, (email,))

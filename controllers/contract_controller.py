@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from data_manager.db_choice import data_manager
 from views.client_view import ClientView
 
 
@@ -43,9 +42,9 @@ class ContractController:
             return full, remaining, created, signed, com_id, client_id
 
     def add_contract(self):
-        full, remaining, created, signed, com_id, client_id = self.get_contract_info()
-        self.contract_service.create_contract(full, remaining, created,
-                                              signed, com_id, client_id)
+        full, rem, created, signed, com, cli = self.get_contract_info()
+        self.contract_service.create_contract(full, rem, created,
+                                              signed, com, cli)
         self.contract_view.contract_created()
         return None
 

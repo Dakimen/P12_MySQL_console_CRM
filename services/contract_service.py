@@ -1,15 +1,16 @@
-from data_manager.db_choice import data_manager
+from services.base_service import BaseService
 
 
-class ContractService:
+class ContractService(BaseService):
     def create_contract(self, total, remaining, created,
                         signed, com_id, cli_id):
         query = """
         INSERT INTO contract
-        (amount_total, amount_remaining, created_at, signed, commercial_responsible_id, client_id)
+        (amount_total, amount_remaining, created_at, signed,
+        commercial_responsible_id, client_id)
         VALUES (%s, %s, %s, %s, UUID_TO_BIN(%s), UUID_TO_BIN(%s))
         """
-        data_manager.make_query(
+        self._execute(
             query,
             (total, remaining, created, signed, com_id, cli_id)
         )
@@ -25,7 +26,7 @@ class ContractService:
         JOIN client
         ON contract.client_id = client.id
         """
-        return data_manager.make_query(query, ())
+        return self._fetch_all(query, ())
 
     def get_contracts_client(self, cli_id, com_id):
         query = """
@@ -37,9 +38,10 @@ class ContractService:
         ON contract.commercial_responsible_id = user.id
         JOIN client
         ON contract.client_id = client.id
-        WHERE client.id = UUID_TO_BIN(%s) AND client.commercial_responsible_id = UUID_TO_BIN(%s)
+        WHERE client.id = UUID_TO_BIN(%s)
+        AND client.commercial_responsible_id = UUID_TO_BIN(%s)
         """
-        return data_manager.make_query(query, (cli_id, com_id))
+        return self._fetch_all(query, (cli_id, com_id))
 
     def get_contract_for_event(self, name, email, resp_id, signed):
         query = """
@@ -53,7 +55,7 @@ class ContractService:
         AND contract.commercial_responsible_id = UUID_TO_BIN(%s)
         AND contract.signed = %s
         """
-        return data_manager.make_query(query, (name, email, resp_id, signed))
+        return self._fetch_one(query, (name, email, resp_id, signed))
 
     def get_contract_event_upd(self, name, email, created):
         query = """
@@ -66,7 +68,7 @@ class ContractService:
         AND client.email = %s
         AND created_at = %s
         """
-        return data_manager.make_query(query, (name, email, created))
+        return self._fetch_one(query, (name, email, created))
 
     def update_contract(self, full, remaining, created, signed, client, resp):
         query = """
@@ -79,8 +81,8 @@ class ContractService:
           AND client_id = UUID_TO_BIN(%s)
           AND created_at = %s
         """
-        return data_manager.make_query(query, (full, remaining,
-                                               signed, resp, client, created))
+        return self._execute(query, (full, remaining,
+                                     signed, resp, client, created))
 
     def filter_by_not_signed(self, user_id):
         query = """
@@ -95,7 +97,7 @@ class ContractService:
         WHERE client.commercial_responsible_id = UUID_TO_BIN(%s)
         AND contract.signed IS NULL
         """
-        return data_manager.make_query(query, (user_id,))
+        return self._fetch_all(query, (user_id,))
 
     def filter_by_not_paid_off(self, user_id):
         query = """
@@ -110,4 +112,4 @@ class ContractService:
         WHERE client.commercial_responsible_id = UUID_TO_BIN(%s)
         AND contract.amount_remaining != 0
         """
-        return data_manager.make_query(query, (user_id,))
+        return self._fetch_all(query, (user_id,))
