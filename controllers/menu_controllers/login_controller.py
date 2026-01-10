@@ -45,7 +45,7 @@ class LoginMenuController:
         user_id, roles = self.collab_controller.find_user_by_email(email,
                                                                    password)
         if not user_id:
-            self.user_view.connection_failure()
+            self.user_view.message("Connection unsuccessful!")
         else:
             token = self.auth_service.generate_web_token(user_id, roles)
             self.auth_service.write_token_to_temp(token)

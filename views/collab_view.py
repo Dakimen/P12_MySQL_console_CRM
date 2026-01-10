@@ -1,99 +1,60 @@
-import getpass
+from views.base_view import BaseView
 
 
-class CollaboratorView:
+class CollaboratorView(BaseView):
     def get_pass_input(self):
-        print("Please enter your current password:")
-        password = getpass.getpass()
-        return password
+        return self.prompt_password("Please enter your current password:")
 
     def get_new_pass(self):
-        print("Enter new password:")
-        new_pass = getpass.getpass()
-        return new_pass
-
-    def confirm_new_pass(self):
-        return print("Password changed successfully!")
-
-    def new_pass_fail(self):
-        return print("Password change failed, incorrect password")
+        return self.prompt_password("Enter new password:")
 
     def display_collab(self, result):
-        print("")
-        print("====================")
-        print(f"Name: {result[0]}")
-        print(f"Email: {result[1]}")
-        print(f"Role: {result[2]}")
-        print("====================")
+        self.section()
+        self.labeled("Name", result[0])
+        self.labeled("Email", result[1])
+        self.labeled("Role", result[2])
+        self.end_section()
 
     def get_new_collab_info(self):
-        print("Enter new collaborator's informations:")
-        print("Name:")
-        name = input(">>> ")
-        print("Email:")
-        email = input(">>> ")
+        self.message("Enter new collaborator's informations:")
+        name = self.prompt("Name:")
+        email = self.prompt("Email:")
         while True:
-            print("Temporary password for first login:")
-            password = getpass.getpass()
-            print("Again:")
-            password2 = getpass.getpass()
+            password = self.prompt_password(
+                "Temporary password for first login:"
+                )
+            password2 = self.prompt_password("Again:")
             if password != password2:
-                print("Password's don't match, try again.")
+                self.message("Passwords don't match, try again.")
                 continue
             return name, email, password
 
-    def confirm_collab_added(self):
-        print("Collaborator added!")
-
     def modif_name_view(self):
-        print("Enter the email of collaborator to modify:")
-        email = input(">>> ")
-        print("Enter collaborator's new name:")
-        name = input(">>> ")
+        email = self.prompt("Enter the email of collaborator to modify:")
+        name = self.prompt("Enter collaborator's new name:")
         return email, name
 
     def modif_email_view(self):
-        print("Enter the name of collaborator to modify:")
-        name = input(">>> ")
-        print("Enter collaborator's new email:")
-        email = input(">>> ")
+        name = self.prompt("Enter the name of collaborator to modify:")
+        email = self.prompt("Enter collaborator's new email:")
         return name, email
 
-    def information_modified(self):
-        return print("Collaborator modified")
-
     def get_email(self):
-        print("Enter collaborator's email:")
-        email = input(">>> ")
-        return email
+        return self.prompt("Enter collaborator's email:")
 
     def get_role(self):
-        print("Pick role:")
-        print("1. Commercial responsible")
-        print("2. Management responsible")
-        print("3. Support responsible")
-        role_choice = ""
-        while role_choice != "1" or role_choice != "2" or role_choice != "3":
-            print("Please enter one of the numbers next to the options above")
-            role_choice = input(">>> ")
-        if role_choice == "1":
-            role_choice = "commercial responsible"
-        elif role_choice == "2":
-            role_choice = "management responsible"
-        else:
-            role_choice = "support responsible"
-        return role_choice
+        choice = self.prompt_choice(
+            "Pick role:\n1. Commercial\n2. Management\n3. Support",
+            {"1", "2", "3"}
+        )
+        return {
+            "1": "commercial responsible",
+            "2": "management responsible",
+            "3": "support responsible"
+        }[choice]
 
     def login_view(self):
-        print("Login.")
-        print("Please enter your email:")
-        email = input(">>> ")
-        password = getpass.getpass()
+        self.message("Login.")
+        email = self.prompt("Please enter your email:")
+        password = self.prompt_password("Enter your password:")
         return email, password
-
-    def connection_success(self):
-        print("Connection success!")
-        return None
-
-    def connection_failure(self):
-        print("Connection unsuccessful or the account wasn't approved yet!")

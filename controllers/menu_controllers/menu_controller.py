@@ -298,7 +298,7 @@ class MenuController:
     @staticmethod
     def display_menu(menu_name, authorized_options):
         menu = Menu(menu_name, authorized_options)
-        user_choice = menu.display_menu()
+        user_choice = menu.display_menu().upper()
         action = authorized_options[user_choice]["action"]
         if action:
             action()

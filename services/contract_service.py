@@ -55,7 +55,7 @@ class ContractService(BaseService):
         AND contract.commercial_responsible_id = UUID_TO_BIN(%s)
         AND contract.signed = %s
         """
-        return self._fetch_one(query, (name, email, resp_id, signed))
+        return self._fetch_one_value(query, (name, email, resp_id, signed))
 
     def get_contract_event_upd(self, name, email, created):
         query = """
@@ -68,7 +68,7 @@ class ContractService(BaseService):
         AND client.email = %s
         AND created_at = %s
         """
-        return self._fetch_one(query, (name, email, created))
+        return self._fetch_one_value(query, (name, email, created))
 
     def update_contract(self, full, remaining, created, signed, client, resp):
         query = """

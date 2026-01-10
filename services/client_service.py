@@ -21,7 +21,7 @@ class ClientService(BaseService):
         FROM client
         WHERE full_name = %s
         """
-        return self._fetch_one(query, (name,))
+        return self._fetch_all(query, (name,))
 
     def find_by_email(self, email):
         query = """
@@ -31,7 +31,7 @@ class ClientService(BaseService):
         FROM client
         WHERE email = %s
         """
-        return self._fetch_one(query, (email,))
+        return self._fetch_all(query, (email,))
 
     def create_client(self, full_name, email, phone, company, user_id):
         query = """

@@ -8,7 +8,7 @@ class CollaboratorService(BaseService):
         FROM user
         WHERE id = UUID_TO_BIN(%s)
         """
-        return self._fetch_one(query, (user_id,))
+        return self._fetch_one_value(query, (user_id,))
 
     def set_new_pass(self, user_id, new_hush):
         query = """
@@ -66,7 +66,7 @@ class CollaboratorService(BaseService):
         """
         return self._execute(query, (email, role_choice))
 
-    def get_user_by_email(self, email):
+    def find_user_by_email(self, email):
         query = """
             SELECT
                 BIN_TO_UUID(user.id),
@@ -79,4 +79,4 @@ class CollaboratorService(BaseService):
                 ON user_role_assignment.role_id = role.id
             WHERE user.email = %s
         """
-        return self._fetch_one(query, (email,))
+        return self._fetch_all(query, (email,))

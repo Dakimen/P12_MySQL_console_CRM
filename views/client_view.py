@@ -1,74 +1,42 @@
-from datetime import datetime
+from views.base_view import BaseView
 
 
-class ClientView:
-    def __init__(self):
-        pass
+class ClientView(BaseView):
+    def display_client(self, client):
+        self.section()
+        self.labeled("Name", client[0])
+        self.labeled("Email", client[1])
+        self.labeled("Phone number", client[2])
+        self.labeled("Company name", client[3])
+        self.labeled("Date created", client[4])
+        try:
+            self.labeled("Last updated", client[5])
+        except IndexError:
+            self.labeled("Last updated", client[4])
+        self.end_section()
 
-    @staticmethod
-    def display_clients(result):
-        print("")
-        print("====================")
-        print(f"Name: {result[0]}")
-        print(f"Email: {result[1]}")
-        print(f"Phone number: {result[2]}")
-        if result[3] is not None:
-            print(f"Company name: {result[3]}")
-        print(f"Date created: {datetime.strftime(result[4],
-                                                 "%d/%m/%Y, %H:%M:%S")}")
-        if not result[5] is None:
-            print(f"Last updated: {datetime.strftime(result[5],
-                                                     "%d/%m/%Y, %H:%M:%S")}")
-        print("====================")
+    def get_client_search_key(self, keyword):
+        return self.prompt(f"Please enter client's {keyword}")
 
-    @staticmethod
-    def get_client_search_key(keyword):
-        print(f"Please enter client's {keyword}")
-        user_input = input(">>> ")
-        return user_input
-
-    @staticmethod
-    def get_info_client():
-        print("Please enter client's full name:")
-        full_name = input(">>> ")
-        print("Please enter client's email:")
-        email = input(">>> ")
-        print("Please enter client's phone number:")
-        phone_number = input(">>> ")
-        decision = None
-        while decision != "Y" and decision != 'N':
-            print("Does client belong to a company? Y/N")
-            decision = input(">>> ").upper()
+    def get_info_client(self):
+        full_name = self.prompt("Please enter client's full name:")
+        email = self.prompt("Please enter client's email:")
+        phone_number = self.prompt("Please enter client's phone number:")
+        decision = self.prompt_choice(
+            "Does client belong to a company? (Y/N)",
+            {"Y", "N"}
+            )
         if decision == "Y":
-            print("Please enter company name:")
-            company_name = input(">>> ")
+            company = self.prompt("Please enter company name:")
         else:
-            company_name = None
-        return full_name, email, phone_number, company_name
+            company = None
+        return full_name, email, phone_number, company
 
-    @staticmethod
-    def client_added_confirmation():
-        print("Client added successfully!")
+    def get_client_name(self):
+        return self.prompt(("Enter the name of the client "
+                            "to modify as listed above"))
 
-    @staticmethod
-    def get_client_name():
-        print(("Enter the name of the client "
-               "to modify as listed above"))
-        client_name = input(">>> ")
-        return client_name
-
-    @staticmethod
-    def get_modif_client_info():
-        print('Enter new client information:')
-        name, email, phone_number, comp = ClientView.get_info_client()
+    def get_modif_client_info(self):
+        self.message('Enter new client information:')
+        name, email, phone_number, comp = self.get_info_client()
         return name, email, phone_number, comp
-
-    @staticmethod
-    def client_updated_confirmation():
-        print("Client updated successfully!")
-        print(("Please verify that information "
-               "was added correctly through client search"))
-
-    @staticmethod
-    def client_not_found():
-        print("Client not found!")
