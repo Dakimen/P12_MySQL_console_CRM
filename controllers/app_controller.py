@@ -13,10 +13,12 @@ from services.contract_service import ContractService
 from views.event_view import EventView
 from views.collab_view import CollaboratorView
 from services.collaborator_service import CollaboratorService
+from sentry import SentryJournalisation
 
 
 class AppContext:
     def __init__(self):
+        self.sentry = SentryJournalisation()
         self.auth_service = AuthService()
         self.client_service = ClientService()
         self.contract_service = ContractService()
@@ -28,14 +30,16 @@ class AppContext:
         self.collab_service = CollaboratorService()
         self.collab_controller = CollaboratorController(self.auth_service,
                                                         self.collab_view,
-                                                        self.collab_service)
+                                                        self.collab_service,
+                                                        self.sentry)
         self.client_controller = ClientController(self.client_view,
                                                   self.client_service,
                                                   self.auth_service)
         self.contract_controller = ContractController(self.contract_view,
                                                       self.client_service,
                                                       self.auth_service,
-                                                      self.contract_service)
+                                                      self.contract_service,
+                                                      self.sentry)
         self.login_controller = LoginMenuController(self.collab_controller,
                                                     self.auth_service,
                                                     self.collab_view)

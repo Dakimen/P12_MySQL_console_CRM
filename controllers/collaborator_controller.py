@@ -2,10 +2,11 @@ import bcrypt
 
 
 class CollaboratorController:
-    def __init__(self, auth_service, collab_view, collab_service):
+    def __init__(self, auth_service, collab_view, collab_service, sentry):
         self.auth_service = auth_service
         self.collab_view = collab_view
         self.collab_service = collab_service
+        self.sentry = sentry
 
     def change_password(self):
         user_id = self.auth_service.get_user_id()
@@ -28,24 +29,33 @@ class CollaboratorController:
             self.collab_view.display_collab(result)
 
     def add_collab(self):
+        created_by = self.auth_service.get_user_id()
         name, email, temp_hush = self.collab_view.get_new_collab_info()
         self.collab_service.save_user_to_db(name, email, temp_hush)
+        self.sentry.create_collaborator(name, email, created_by)
         return self.collab_view.message("Collaborator added!")
 
     def modif_name(self):
+        updated_by = self.auth_service.get_user_id()
         email, name = self.collab_view.modif_name_view()
         self.collab_service.update_user_name(name, email)
+        self.sentry.update_collaborator_name(name, email, updated_by)
         return self.collab_view.message("Collaborator modified")
 
     def modif_email(self):
+        updated_by = self.auth_service.get_user_id()
         name, email = self.collab_view.modif_email_view()
         self.collab_service.update_user_email(email, name)
+        self.sentry.update_collaborator_email(name, email, updated_by)
         return self.collab_view.message("Collaborator modified")
 
     def assign_role(self):
+        updated_by = self.auth_service.get_user_id()
         email = self.collab_view.get_email()
         role_choice = self.collab_view.get_role()
         self.collab_service.assign_role(email, role_choice)
+        self.sentry.update_collaborator_role(self, email,
+                                             role_choice, updated_by)
         return self.collab_view.message("Role assigned")
 
     def find_user_by_email(self, email, password):

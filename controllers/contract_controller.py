@@ -1,10 +1,11 @@
 class ContractController:
     def __init__(self, contract_view, client_service,
-                 auth_service, contract_service):
+                 auth_service, contract_service, sentry):
         self.contract_view = contract_view
         self.client_service = client_service
         self.auth_service = auth_service
         self.contract_service = contract_service
+        self.sentry = sentry
 
     def find_client_for_contract(self):
         client_name, email = self.contract_view.get_client()
@@ -50,20 +51,22 @@ class ContractController:
             self.contract_view.display_contract_info(result)
         return client_id, com_id
 
-    def modif_contract(self):
-        self.contract_view.message(
-            "Please enter the values of the contract to modify:"
-            )
-        client, resp = self.find_contract()
+    def contract_modif_finalize(self, client, resp):
         created = self.contract_view.get_date_created()
         self.contract_view.message(
             "Please enter the contract's new informations:"
             )
         full, remaining = self.get_cont_values()
-        signed = self.contract_view.get_signed()
         self.contract_service.update_contract(full, remaining, created,
-                                              signed, client, resp)
+                                              client, resp)
         self.contract_view.message("Contract updated successfully!")
+
+    def modif_contract_management(self):
+        self.contract_view.message(
+            "Please enter the values of the contract to modify:"
+            )
+        client, resp = self.find_contract()
+        return self.contract_modif_finalize(client, resp)
 
     def filter_not_signed(self):
         user_id = self.auth_service.get_user_id()
@@ -76,3 +79,53 @@ class ContractController:
         results = self.contract_service.filter_by_not_paid_off(user_id)
         for result in results:
             self.contract_view.display_contract_info(result)
+
+    def sign_contract(self):
+        token = self.auth_service.get_token_from_temp()
+        roles = self.auth_service.get_roles(token)
+        modif_by = self.auth_service.get_user_id_from_token(token)
+        self.contract_view.message(
+            "Please enter the values of the contract to modify:"
+            )
+        client, resp = self.find_contract()
+        if modif_by == resp or "management responsible" in roles:
+            created = self.contract_view.get_date_created()
+            self.contract_view.message(
+                "Please enter contract signature details"
+                )
+            signed = self.contract_view.get_signed()
+            if signed is not None:
+                self.contract_service.sign_contract(created,
+                                                    client, resp, signed)
+                self.sentry.sign_contract(client, signed, modif_by)
+            else:
+                return None
+        else:
+            return self.contract_view.message("Access denied")
+
+    def router_modif(self):
+        token = self.auth_service.get_token_from_temp()
+        roles = self.auth_service.get_roles(token)
+        if "management responsible" in roles:
+            return self.modif_contract_management()
+        elif "commercial responsible" in roles:
+            return self.modif_contract_own()
+        else:
+            return None
+
+    def modif_contract_own(self):
+        self.contract_view.message(
+            "Please enter the values of the contract to modify:"
+            )
+        user_id = self.auth_service.get_user_id()
+        client_name, email = self.contract_view.get_client()
+        client_id, resp_id = self.client_service.get_client_with_responsible(
+            client_name, email
+            )
+        if resp_id == user_id:
+            return self.contract_modif_finalize(client_id, user_id)
+        else:
+            self.contract_view.message(
+                "You can only modify your own contracts!"
+                )
+            return None

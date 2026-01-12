@@ -70,19 +70,29 @@ class ContractService(BaseService):
         """
         return self._fetch_one_value(query, (name, email, created))
 
-    def update_contract(self, full, remaining, created, signed, client, resp):
+    def update_contract(self, full, remaining, created, client, resp):
         query = """
         UPDATE contract
         SET
             amount_total = %s,
-            amount_remaining = %s,
-            signed = %s
+            amount_remaining = %s
         WHERE commercial_responsible_id = UUID_TO_BIN(%s)
           AND client_id = UUID_TO_BIN(%s)
           AND created_at = %s
         """
         return self._execute(query, (full, remaining,
-                                     signed, resp, client, created))
+                                     resp, client, created))
+
+    def sign_contract(self, created, client, resp, signed):
+        query = """
+        UPDATE contract
+        SET
+            signed = %s
+        WHERE commercial_responsible_id = UUID_TO_BIN(%s)
+          AND client_id = UUID_TO_BIN(%s)
+          AND created_at = %s
+        """
+        return self._execute(query, (signed, resp, client, created))
 
     def filter_by_not_signed(self, user_id):
         query = """

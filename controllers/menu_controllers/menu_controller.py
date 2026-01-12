@@ -97,7 +97,7 @@ class MenuController:
                   },
             "4": {"text": "Modify contract",
                   "key": "4",
-                  "action": self.contract_controller.modif_contract,
+                  "action": self.find_contract_modif_router,
                   "role": ["management responsible", "commercial responsible"]
                   },
             "5": {"text": "Filter contracts",
@@ -119,6 +119,17 @@ class MenuController:
                   "key": "2",
                   "action": self.contract_controller.filter_not_paid},
             "B": {"text": "Back to previous menu",
+                  "key": "B",
+                  "action": None}
+        }
+        self.CONTRACT_MODIF_OPTIONS = {
+            "1": {"text": "Sign contract",
+                  "key": "1",
+                  "action": self.contract_controller.sign_contract},
+            "2": {"text": "Modify contract",
+                  "key": "2",
+                  "action": self.contract_controller.router_modif},
+            "B": {"text": "Back to the previous menu",
                   "key": "B",
                   "action": None}
         }
@@ -253,6 +264,9 @@ class MenuController:
 
     def find_contract_filter_router(self):
         self.display_menu("Contract search", self.CONTRACT_FILTER_OPTIONS)
+
+    def find_contract_modif_router(self):
+        self.display_menu("Contract modification", self.CONTRACT_MODIF_OPTIONS)
 
     def display_event_menu(self):
         authorized_options = self.get_authorized_menu_options(
