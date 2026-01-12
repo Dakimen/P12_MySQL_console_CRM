@@ -1,7 +1,26 @@
 class EventController:
+    """
+    Handles event-related actions.
+
+    Event Controller is responsible for handling
+    event-related commands,
+    such as displaying, searching, adding and modifying events.
+    """
     def __init__(self, event_view, auth_service,
                  event_service, contract_service,
                  contract_view):
+        """
+        Initialize the contract controller.
+
+        Stores references to required contract view, client service,
+        authentification service, contract service and sentry.
+
+        :param event_view: View responsible for event prompts.
+        :param auth_service: Service responsible for authentification.
+        :param event_service: Service responsible for events.
+        :param contract_service: Service responsible for contract actions.
+        :param contract_view: View responsible for contract prompts.
+        """
         self.event_view = event_view
         self.auth_service = auth_service
         self.event_service = event_service
@@ -9,11 +28,17 @@ class EventController:
         self.contract_view = contract_view
 
     def display_all(self):
+        """
+        Recovers and displays all events.
+        """
         results = self.event_service.get_all()
         for result in results:
             self.event_view.display_event(result)
 
     def create_event(self):
+        """
+        Manages event creation.
+        """
         user_id = self.auth_service.get_user_id()
         data = self.event_view.get_event_data()
         c_name, c_email = self.event_view.get_client_data()
@@ -32,12 +57,18 @@ class EventController:
             return None
 
     def filter_own_events(self):
+        """
+        Recovers all events tied to this user and displays them.
+        """
         user_id = self.auth_service.get_user_id()
         results = self.event_service.get_all_own(user_id)
         for result in results:
             self.event_view.display_event(result)
 
     def filter_no_support(self):
+        """
+        Filters and displays events with no support responsible attached.
+        """
         results = self.event_service.get_all_no_support()
         if results is not None:
             for result in results:
@@ -46,12 +77,18 @@ class EventController:
             self.event_view.message("No matching events found")
 
     def find_event(self):
+        """
+        Handles event search and displays the results.
+        """
         self.event_view.message("Event search")
         name, email = self.event_view.get_client_data()
         results = self.event_service.find_event(name, email)
         self.event_view.display_event(results)
 
     def modify_event(self):
+        """
+        Handles event modification.
+        """
         self.event_view.message(
             ("Event modification"
              "\n"

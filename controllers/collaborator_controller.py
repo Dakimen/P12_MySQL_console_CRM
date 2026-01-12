@@ -2,13 +2,40 @@ import bcrypt
 
 
 class CollaboratorController:
+    """
+    Handles collaborator-related actions.
+
+    Collaborator Controller is responsible for handling
+    collaborator-related commands,
+    such as displaying, searching, adding and modifying collaborators,
+    as well as permitting logged in collaborators to change their password.
+    """
     def __init__(self, auth_service, collab_view, collab_service, sentry):
+        """
+            Initialize the collaborator controller.
+
+            Stores references to required authentication service,
+            collaborator view, collaborator service and sentry.
+
+            Args:
+            auth_service: Service responsible for authentication.
+            collab_view: View responsible for collaborator-related actions.
+            collab_service: Service handling collaborator-related actions.
+            sentry: Service handling Sentry journalisation.
+        """
         self.auth_service = auth_service
         self.collab_view = collab_view
         self.collab_service = collab_service
         self.sentry = sentry
 
     def change_password(self):
+        """
+        Manages password change procedure
+
+        Prompts user to enter their password and allows them
+        to type a new one on successful validation.
+        Prints out an error message otherwise.
+        """
         user_id = self.auth_service.get_user_id()
         hush = self.collab_service.get_pass_hush(user_id)
         user_pass_input = self.collab_view.get_pass_input()
@@ -24,11 +51,21 @@ class CollaboratorController:
                 )
 
     def get_all(self):
+        """
+        Prints out all current collaborators' names and emails.
+        """
         results = self.collab_service.get_all()
         for result in results:
             self.collab_view.display_collab(result)
 
     def add_collab(self):
+        """
+        Manages collaborator addition.
+
+        Gathers new collaborator information
+        and passes it to the collaborator service.
+        Sends a sentry notification on successful addition.
+        """
         created_by = self.auth_service.get_user_id()
         name, email, temp_hush = self.collab_view.get_new_collab_info()
         self.collab_service.save_user_to_db(name, email, temp_hush)
@@ -36,6 +73,9 @@ class CollaboratorController:
         return self.collab_view.message("Collaborator added!")
 
     def modif_name(self):
+        """
+        Manages collaborator name modification.
+        """
         updated_by = self.auth_service.get_user_id()
         email, name = self.collab_view.modif_name_view()
         self.collab_service.update_user_name(name, email)
@@ -43,6 +83,9 @@ class CollaboratorController:
         return self.collab_view.message("Collaborator modified")
 
     def modif_email(self):
+        """
+        Manages collaborator email modification.
+        """
         updated_by = self.auth_service.get_user_id()
         name, email = self.collab_view.modif_email_view()
         self.collab_service.update_user_email(email, name)
@@ -50,6 +93,9 @@ class CollaboratorController:
         return self.collab_view.message("Collaborator modified")
 
     def assign_role(self):
+        """
+        Handles role assignation to a given collaborator.
+        """
         updated_by = self.auth_service.get_user_id()
         email = self.collab_view.get_email()
         role_choice = self.collab_view.get_role()
@@ -59,6 +105,12 @@ class CollaboratorController:
         return self.collab_view.message("Role assigned")
 
     def find_user_by_email(self, email, password):
+        """
+        Manages user search by email. Used for login.
+
+        :param email: string containing user's email
+        :param password: Unhushed password for validation.
+        """
         results = self.collab_service.find_user_by_email(email)
         if not results:
             return None, None

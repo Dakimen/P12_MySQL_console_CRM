@@ -13,11 +13,29 @@ from services.contract_service import ContractService
 from views.event_view import EventView
 from views.collab_view import CollaboratorView
 from services.collaborator_service import CollaboratorService
-from sentry import SentryJournalisation
+from services.sentry import SentryJournalisation
 
 
 class AppContext:
+    """
+    Centralizes and initializes application dependencies.
+
+    AppContext acts as the composition root of the application, responsible
+    for creating and wiring together services, views, controllers, and
+    cross-cutting infrastructure components. It ensures that all parts of
+    the application receive the required dependencies and share a consistent
+    context.
+    """
     def __init__(self):
+        """
+        Initialize the application context and its dependencies.
+
+        Instantiates core services, views, controllers, and infrastructure
+        components, and injects the appropriate dependencies into each
+        controller. This setup allows controllers to coordinate business
+        logic, user interaction, and persistence concerns in a structured
+        and maintainable way.
+        """
         self.sentry = SentryJournalisation()
         self.auth_service = AuthService()
         self.client_service = ClientService()
@@ -56,11 +74,40 @@ class AppContext:
 
 
 class AppController:
+    """
+    Coordinates the high-level application flow.
+
+    The AppController is responsible for initializing the application context
+    and orchestrating the startup sequence. It verifies whether user login
+    is required, triggers authentication-related actions, and delegates
+    control to the main menu once authentication is complete.
+
+    This class acts as the primary entry point for running the application
+    and coordinating interactions between context-managed controllers.
+    """
 
     def __init__(self):
+        """
+        Initialize the application controller.
+
+        Creates and stores the application context, which provides access
+        to the various controllers and shared resources required to run
+        the application.
+        """
         self.context = AppContext()
 
     def run(self):
+        """
+        Execute the main application workflow.
+
+        Verifies whether user authentication is required. If login is
+        successful or not required, retrieves the user's token and roles
+        and displays the main menu.
+
+        Returns:
+            Any: The result of displaying the main menu, as returned by
+            the menu controller, or None if login is not required or fails.
+        """
         login_status = self.context.login_controller.verify_login_needed()
         if login_status:
             self.context.menu_controller.get_token_and_roles()
