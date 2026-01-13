@@ -2,7 +2,7 @@
 
 A simple, console-based Customer Relationship Management (CRM) application built as a study project for a fictional company called **Epic Events**.
 
-This repository implements a fully functional CLI CRM using Python and MySQL. It supports user authentication, client and contract management, and interactive menus — ideal for learning how to build a real-world database-backed application.
+This repository implements a fully functional CLI CRM using Python and MySQL. It supports user authentication, client and contract management, and interactive menus.
 
 ---
 
