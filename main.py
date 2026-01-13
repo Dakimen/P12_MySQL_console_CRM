@@ -2,7 +2,11 @@ from controllers.app_controller import AppController
 
 
 def main():
-    """Entry point of the application"""
+    """
+    Start application.
+    Entry point of the application, initializing the app controller
+    and entering the application.
+    """
     app = AppController()
     app.run()
 

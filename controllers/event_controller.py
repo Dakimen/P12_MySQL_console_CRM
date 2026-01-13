@@ -83,7 +83,8 @@ class EventController:
         self.event_view.message("Event search")
         name, email = self.event_view.get_client_data()
         results = self.event_service.find_event(name, email)
-        self.event_view.display_event(results)
+        for result in results:
+            self.event_view.display_event(result)
 
     def modify_event(self):
         """
