@@ -1,10 +1,26 @@
-from datetime import datetime
-
 from views.base_view import BaseView
 
 
 class EventView(BaseView):
+    """
+    Event view class used for displaying event information
+    and collecting event-related user input.
+
+    Inherits from BaseView and relies on its helper methods for
+    prompting, messaging, and formatted output.
+    """
     def display_event(self, event):
+        """
+        Display an event's information in a formatted section.
+
+        Args:
+            event (tuple | list): Event data containing:
+                (start date, end date, location, number of attendees,
+                notes, client and support representative).
+
+        Side Effects:
+            - Outputs formatted event information to the user interface.
+        """
         self.section()
         self.labeled("Client", event[5])
         dates = f"{event[0]} - {event[1]}"
@@ -19,17 +35,15 @@ class EventView(BaseView):
             self.labeled("Support", "Unassigned")
         self.end_section()
 
-    def get_datetime(self):
-        while True:
-            print(("Please follow the date format: "
-                   "dd/mm/yyyy HH:MM (ex: 08/01/2026 19:47)"))
-            value = input(">>> ")
-            try:
-                return datetime.strptime(value, "%d/%m/%Y %H:%M")
-            except ValueError:
-                print("Invalid date or format.")
-
     def get_start_and_end(self):
+        """
+        Prompts user to enter event's start and end dates.
+        Prompts follow %d/%m/%Y %H:%M format.
+
+        Returns:
+            start (datetime): Event's start date and hour.
+            end (datetime): Event's end date and hour.
+        """
         start = self.prompt_date("Please enter the event's start date:",
                                  "%d/%m/%Y %H:%M")
         while True:
@@ -41,14 +55,35 @@ class EventView(BaseView):
             return start, end
 
     def get_client_data(self):
+        """
+        Prompts user to enter client's informations for event search.
+
+        Returns:
+            client_name (str): Client's full name.
+            client_email (str): Client's email.
+        """
         client_name = self.prompt("Please enter the client's full name")
         client_email = self.prompt("Please enter the client's email")
         return client_name, client_email
 
     def get_new_responsible_email(self):
+        """
+        Prompts user to enter the email of a new support responsible for
+        event assignation.
+
+        Returns:
+            email (str): Support responsible's email as entered by the user.
+        """
         return self.prompt("Please enter the new support responsible's email:")
 
     def get_event_data(self):
+        """
+        Prompts user to enter data necessary for event addition.
+
+        Returns:
+            data (tuple): event data containing: (start date, end date,
+            location, number of attendees, notes)
+        """
         start, end = self.get_start_and_end()
         location = self.prompt("Please enter the event's location:")
         attendees = self.prompt_int('Please enter the number of attendees:')
