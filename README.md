@@ -6,7 +6,7 @@ This repository implements a fully functional CLI CRM using Python and MySQL. It
 
 ---
 
-## 📋 Features
+## Features
 
 - **User authentication** with JWT tokens
 - **Client management** (create, view, search, update)
@@ -16,9 +16,9 @@ This repository implements a fully functional CLI CRM using Python and MySQL. It
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### 🛠 Prerequisites
+### Prerequisites
 
 Before running the application, make sure you have:
 
