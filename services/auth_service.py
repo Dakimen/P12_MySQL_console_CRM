@@ -50,8 +50,7 @@ class AuthService:
         with open(temp_storage, 'w') as file:
             json.dump({}, file)
 
-    @staticmethod
-    def logout(temp_storage="temp.json"):
+    def logout(self, temp_storage="temp.json"):
         """
         Performs logout by clearing the contents of a temporary JSON file
         and exiting program.
@@ -62,8 +61,7 @@ class AuthService:
         Returns:
             None, exits program
         """
-        with open(temp_storage, 'w') as file:
-            json.dump({}, file)
+        self.clean_json_temp()
         return sys.exit()
 
     @staticmethod
