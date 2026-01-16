@@ -61,7 +61,7 @@ class AuthService:
         Returns:
             None, exits program
         """
-        self.clean_json_temp()
+        self.clean_json_temp(temp_storage)
         return sys.exit()
 
     @staticmethod
