@@ -68,6 +68,7 @@ class CollaboratorController:
         """
         created_by = self.auth_service.get_user_id()
         name, email, temp_hush = self.collab_view.get_new_collab_info()
+        temp_hush = bcrypt.hashpw(temp_hush.encode(), bcrypt.gensalt())
         self.collab_service.save_user_to_db(name, email, temp_hush)
         self.sentry.create_collaborator(name, email, created_by)
         return self.collab_view.message("Collaborator added!")
