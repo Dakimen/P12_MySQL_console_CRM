@@ -55,6 +55,10 @@ class MenuController:
                 "action": self.display_collaborator_menu,
                 "role": None
                 },
+          "5": {"text": "Logout",
+                "key": "5",
+                "action": self.auth_service.logout,
+                "role": None},
           "Q": {"text": "Quit programme",
                 "key": "Q",
                 "action": None,

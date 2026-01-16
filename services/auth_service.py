@@ -51,6 +51,22 @@ class AuthService:
             json.dump({}, file)
 
     @staticmethod
+    def logout(temp_storage="temp.json"):
+        """
+        Performs logout by clearing the contents of a temporary JSON file
+        and exiting program.
+
+        Args:
+            temp_storage (str): Path to the temporary JSON file.
+
+        Returns:
+            None, exits program
+        """
+        with open(temp_storage, 'w') as file:
+            json.dump({}, file)
+        return sys.exit()
+
+    @staticmethod
     def get_user_id_from_token(token):
         """
         Decode a JWT and extract the user ID.
