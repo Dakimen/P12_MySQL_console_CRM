@@ -61,7 +61,7 @@ class LoginMenuController:
         Takes no arguments, requires class to be instanciated.
         """
         main_menu = Menu('Login menu', self.LOGIN_MENU_OPTIONS)
-        user_choice = main_menu.display_menu().upper()
+        user_choice = main_menu.display_menu()
         action = self.LOGIN_MENU_OPTIONS[user_choice]["action"]
         if action:
             return action()

@@ -39,7 +39,7 @@ class ContractController:
             return client
         else:
             self.contract_view.message("Client not found!")
-            return None
+            return None, None
 
     def get_cont_values(self):
         """
@@ -87,8 +87,11 @@ class ContractController:
         Displays all the contracts in the database.
         """
         results = self.contract_service.get_all()
-        for result in results:
-            self.contract_view.display_contract_info(result)
+        try:
+            for result in results:
+                self.contract_view.display_contract_info(result)
+        except TypeError:
+            self.contract_view.message("Nothing found!")
 
     def find_contract(self):
         """
@@ -98,12 +101,18 @@ class ContractController:
         and their commercial responsible's id.
         """
         client_id, com_id = self.find_client_for_contract()
+        if client_id is None:
+            return None
         results = self.contract_service.get_contracts_client(
             client_id, com_id
             )
-        for result in results:
-            self.contract_view.display_contract_info(result)
-        return client_id, com_id
+        try:
+            for result in results:
+                self.contract_view.display_contract_info(result)
+            return client_id, com_id
+        except TypeError:
+            self.contract_view.message("Nothing found!")
+            return None, None
 
     def contract_modif_finalize(self, client, resp):
         """
@@ -130,6 +139,8 @@ class ContractController:
             "Please enter the values of the contract to modify:"
             )
         client, resp = self.find_contract()
+        if client is None:
+            return None
         return self.contract_modif_finalize(client, resp)
 
     def filter_not_signed(self):
@@ -138,8 +149,11 @@ class ContractController:
         """
         user_id = self.auth_service.get_user_id()
         results = self.contract_service.filter_by_not_signed(user_id)
-        for result in results:
-            self.contract_view.display_contract_info(result)
+        try:
+            for result in results:
+                self.contract_view.display_contract_info(result)
+        except TypeError:
+            self.contract_view.message("Nothing found!")
 
     def filter_not_paid(self):
         """
@@ -147,8 +161,11 @@ class ContractController:
         """
         user_id = self.auth_service.get_user_id()
         results = self.contract_service.filter_by_not_paid_off(user_id)
-        for result in results:
-            self.contract_view.display_contract_info(result)
+        try:
+            for result in results:
+                self.contract_view.display_contract_info(result)
+        except TypeError:
+            self.contract_view.message("Nothing found!")
 
     def sign_contract(self):
         """
@@ -164,6 +181,8 @@ class ContractController:
             "Please enter the values of the contract to modify:"
             )
         client, resp = self.find_contract()
+        if client is None:
+            return None
         if modif_by == resp or "management responsible" in roles:
             created = self.contract_view.get_date_created()
             self.contract_view.message(
@@ -172,7 +191,9 @@ class ContractController:
             signed = self.contract_view.get_signed()
             if signed is not None:
                 self.contract_service.sign_contract(created,
-                                                    client, resp, signed)
+                                                    client,
+                                                    resp,
+                                                    signed)
                 self.sentry.sign_contract(client, signed, modif_by)
             else:
                 return None

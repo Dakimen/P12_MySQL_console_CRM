@@ -436,7 +436,7 @@ class MenuController:
             authorized_options (dict): Menu options available to the user.
         """
         menu = Menu(menu_name, authorized_options)
-        user_choice = menu.display_menu().upper()
+        user_choice = menu.display_menu()
         action = authorized_options[user_choice]["action"]
         if action:
             action()

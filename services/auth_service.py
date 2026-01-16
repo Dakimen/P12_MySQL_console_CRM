@@ -169,7 +169,10 @@ class AuthService:
         Returns:
             bool: True if the password matches the hash, False otherwise.
         """
-        return bcrypt.checkpw(password.encode(), stored_hush.encode())
+        try:
+            return bcrypt.checkpw(password.encode(), stored_hush.encode())
+        except ValueError:
+            return False
 
     @staticmethod
     def generate_web_token(user_id, roles):

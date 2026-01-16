@@ -63,21 +63,6 @@ CREATE TABLE `contract` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `department`
---
-
-DROP TABLE IF EXISTS `department`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `department` (
-  `id` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid())),
-  `name` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`,`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `event`
 --
 
@@ -126,12 +111,9 @@ CREATE TABLE `user` (
   `name` varchar(100) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password_hush` varchar(255) NOT NULL,
-  `department_id` binary(16) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`,`email`),
-  UNIQUE KEY `email` (`email`),
-  KEY `department_id` (`department_id`),
-  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE SET NULL
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -161,4 +143,4 @@ CREATE TABLE `user_role_assignment` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-11 18:03:20
+-- Dump completed on 2026-01-16 16:47:15

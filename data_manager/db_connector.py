@@ -25,7 +25,10 @@ class DataBaseConnector_MySQL:
         """
         connection = self.get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(query_string, param)
+        try:
+            cursor.execute(query_string, param)
+        except (mysql.connector.errors.IntegrityError):
+            return None
         results = cursor.fetchall()
         cursor.close()
         connection.commit()

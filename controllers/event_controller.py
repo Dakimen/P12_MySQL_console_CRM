@@ -32,8 +32,11 @@ class EventController:
         Recovers and displays all events.
         """
         results = self.event_service.get_all()
-        for result in results:
-            self.event_view.display_event(result)
+        try:
+            for result in results:
+                self.event_view.display_event(result)
+        except TypeError:
+            self.event_view.message("Nothing found!")
 
     def create_event(self):
         """
@@ -62,18 +65,21 @@ class EventController:
         """
         user_id = self.auth_service.get_user_id()
         results = self.event_service.get_all_own(user_id)
-        for result in results:
-            self.event_view.display_event(result)
+        try:
+            for result in results:
+                self.event_view.display_event(result)
+        except TypeError:
+            self.event_view.message("Nothing found!")
 
     def filter_no_support(self):
         """
         Filters and displays events with no support responsible attached.
         """
         results = self.event_service.get_all_no_support()
-        if results is not None:
+        try:
             for result in results:
                 self.event_view.display_event(result)
-        else:
+        except TypeError:
             self.event_view.message("No matching events found")
 
     def find_event(self):
@@ -83,8 +89,11 @@ class EventController:
         self.event_view.message("Event search")
         name, email = self.event_view.get_client_data()
         results = self.event_service.find_event(name, email)
-        for result in results:
-            self.event_view.display_event(result)
+        try:
+            for result in results:
+                self.event_view.display_event(result)
+        except TypeError:
+            self.event_view.message("Nothing found!")
 
     def modify_event(self):
         """

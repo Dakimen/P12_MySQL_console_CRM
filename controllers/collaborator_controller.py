@@ -55,8 +55,11 @@ class CollaboratorController:
         Prints out all current collaborators' names and emails.
         """
         results = self.collab_service.get_all()
-        for result in results:
-            self.collab_view.display_collab(result)
+        try:
+            for result in results:
+                self.collab_view.display_collab(result)
+        except TypeError:
+            self.collab_view.message("Nothing found!")
 
     def add_collab(self):
         """
@@ -101,7 +104,7 @@ class CollaboratorController:
         email = self.collab_view.get_email()
         role_choice = self.collab_view.get_role()
         self.collab_service.assign_role(email, role_choice)
-        self.sentry.update_collaborator_role(self, email,
+        self.sentry.update_collaborator_role(email,
                                              role_choice, updated_by)
         return self.collab_view.message("Role assigned")
 
