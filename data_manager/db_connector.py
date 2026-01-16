@@ -34,3 +34,23 @@ class DataBaseConnector_MySQL:
         connection.commit()
         connection.close()
         return results
+
+    def execute(self, query: str, params: tuple = ()):
+        """
+        Executes a query that modifies the database.
+
+        Returns:
+            int: Number of rows affected by the query.
+        """
+        connection = self.get_db_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(query, params)
+            affected = cursor.rowcount
+            connection.commit()
+        except mysql.connector.errors.IntegrityError:
+            affected = 0
+        finally:
+            cursor.close()
+            connection.close()
+        return affected

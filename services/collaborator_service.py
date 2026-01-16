@@ -33,14 +33,15 @@ class CollaboratorService(BaseService):
             new_hush (str): The user's new hushed password.
 
         Returns:
-            None
+            True | False
         """
         query = """
         UPDATE user
         SET password_hush = %s
         WHERE user.id = UUID_TO_BIN(%s)
         """
-        return self._execute(query, (new_hush, user_id))
+        affected = self._execute(query, (new_hush, user_id))
+        return affected > 0
 
     def get_all(self):
         """
@@ -73,7 +74,7 @@ class CollaboratorService(BaseService):
             hush (str): User's temporary password, hushed.
 
         Returns:
-            None
+            True | False
 
         Side Effects:
             - Inserts a new row into the `user` table.
@@ -82,7 +83,8 @@ class CollaboratorService(BaseService):
         INSERT INTO user (name, email, password_hush)
         VALUES (%s, %s, %s)
         """
-        return self._execute(query, (name, email, hush))
+        affected = self._execute(query, (name, email, hush))
+        return affected > 0
 
     def update_user_name(self, name, email):
         """
@@ -95,7 +97,7 @@ class CollaboratorService(BaseService):
             email (str): email used to identify which user to update.
 
         Returns:
-            None
+            True | False
 
         Side Effects:
             - Updates the matching user record in the database.
@@ -105,7 +107,8 @@ class CollaboratorService(BaseService):
         SET name = %s
         WHERE email = %s
         """
-        return self._execute(query, (name, email))
+        affected = self._execute(query, (name, email))
+        return affected > 0
 
     def update_user_email(self, email, name):
         """
@@ -128,7 +131,8 @@ class CollaboratorService(BaseService):
         SET email = %s
         WHERE name = %s
         """
-        return self._execute(query, (email, name))
+        affected = self._execute(query, (email, name))
+        return affected > 0
 
     def assign_role(self, email, role_choice):
         """
@@ -155,7 +159,8 @@ class CollaboratorService(BaseService):
         WHERE user.email = %s
         AND role.title = %s
         """
-        return self._execute(query, (email, role_choice))
+        affected = self._execute(query, (email, role_choice))
+        return affected > 0
 
     def find_user_by_email(self, email):
         """

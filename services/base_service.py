@@ -50,8 +50,7 @@ class BaseService(ABC):
 
         Returns None.
         """
-        data_manager.make_query(query, params)
-        return None
+        return data_manager.execute(query, params)
 
     def _fetch_one_value(self, query: str, params: tuple = ()):
         """

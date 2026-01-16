@@ -61,9 +61,10 @@ class EventService(BaseService):
         VALUES
         (%s, %s, %s, %s, %s, UUID_TO_BIN(%s))
         """
-        return self._execute(query, (start, end, location,
-                                     attendees, notes,
-                                     contract_id))
+        affected = self._execute(query, (start, end, location,
+                                         attendees, notes,
+                                         contract_id))
+        return affected > 0
 
     def get_all_own(self, user_id):
         """
@@ -196,6 +197,7 @@ class EventService(BaseService):
             )
         WHERE contract_id = UUID_TO_BIN(%s);
         """
-        return self._execute(query, (start, end, location,
-                                     attendees, notes, support,
-                                     contract_id))
+        affected = self._execute(query, (start, end, location,
+                                         attendees, notes, support,
+                                         contract_id))
+        return affected > 0

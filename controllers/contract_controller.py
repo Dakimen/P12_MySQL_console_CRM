@@ -66,21 +66,27 @@ class ContractController:
         client_id(str)
         """
         client = self.find_client_for_contract()
-        if client:
-            client_id, com_id = client
-            full, remaining = self.get_cont_values()
-            created, signed = self.contract_view.get_created_signed()
-            return full, remaining, created, signed, com_id, client_id
+        client_id, com_id = client
+        if client_id is None:
+            return None
+        full, remaining = self.get_cont_values()
+        created, signed = self.contract_view.get_created_signed()
+        return full, remaining, created, signed, com_id, client_id
 
     def add_contract(self):
         """
         Manages contract creation.
         """
-        full, rem, created, signed, com, cli = self.get_contract_info()
-        self.contract_service.create_contract(full, rem, created,
-                                              signed, com, cli)
-        self.contract_view.message("Contract added successfully!")
-        return None
+        try:
+            full, rem, created, signed, com, cli = self.get_contract_info()
+        except TypeError:
+            return None
+        if self.contract_service.create_contract(full, rem, created,
+                                                 signed, com, cli):
+            self.contract_view.message("Contract added successfully!")
+            return None
+        else:
+            self.contract_view.message("Contract creation failed!")
 
     def show_all(self):
         """
@@ -102,7 +108,7 @@ class ContractController:
         """
         client_id, com_id = self.find_client_for_contract()
         if client_id is None:
-            return None
+            return None, None
         results = self.contract_service.get_contracts_client(
             client_id, com_id
             )
@@ -127,9 +133,13 @@ class ContractController:
             "Please enter the contract's new informations:"
             )
         full, remaining = self.get_cont_values()
-        self.contract_service.update_contract(full, remaining, created,
-                                              client, resp)
-        self.contract_view.message("Contract updated successfully!")
+        if self.contract_service.update_contract(full, remaining, created,
+                                                 client, resp):
+            self.contract_view.message("Contract updated successfully!")
+            return None
+        else:
+            self.contract_view.message("Contract update failed!")
+            return None
 
     def modif_contract_management(self):
         """
@@ -190,11 +200,16 @@ class ContractController:
                 )
             signed = self.contract_view.get_signed()
             if signed is not None:
-                self.contract_service.sign_contract(created,
-                                                    client,
-                                                    resp,
-                                                    signed)
-                self.sentry.sign_contract(client, signed, modif_by)
+                if self.contract_service.sign_contract(created,
+                                                       client,
+                                                       resp,
+                                                       signed):
+                    self.sentry.sign_contract(client, signed, modif_by)
+                    self.contract_view.message("Contract signed!")
+                    return None
+                else:
+                    self.contract_view.message("Signature failed!")
+                    return None
             else:
                 return None
         else:
@@ -225,9 +240,14 @@ class ContractController:
             )
         user_id = self.auth_service.get_user_id()
         client_name, email = self.contract_view.get_client()
-        client_id, resp_id = self.client_service.get_client_with_responsible(
-            client_name, email
-            )
+        try:
+            client_resp_ids = self.client_service.get_client_with_responsible(
+                client_name, email
+                )
+            client_id, resp_id = client_resp_ids
+        except TypeError:
+            self.contract_view.message("Client not found!")
+            return None
         if resp_id == user_id:
             return self.contract_modif_finalize(client_id, user_id)
         else:

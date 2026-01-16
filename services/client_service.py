@@ -76,7 +76,7 @@ class ClientService(BaseService):
             user_id (str): UUID of the commercial responsible user.
 
         Returns:
-            None
+            True | False
 
         Side Effects:
             - Inserts a new row into the `client` table.
@@ -87,10 +87,11 @@ class ClientService(BaseService):
         commercial_responsible_id)
         VALUES (%s, %s, %s, %s, UUID_TO_BIN(%s))
         """
-        self._execute(
+        affected = self._execute(
             query,
             (full_name, email, phone, company, user_id)
         )
+        return affected > 0
 
     def get_clients_for_user(self, user_id):
         """
@@ -126,7 +127,7 @@ class ClientService(BaseService):
             user_id (str): UUID of the commercial responsible user.
 
         Returns:
-            None
+            True | False
 
         Side Effects:
             - Updates the matching client record in the database.
@@ -144,10 +145,11 @@ class ClientService(BaseService):
         WHERE commercial_responsible_id = UUID_TO_BIN(%s)
           AND full_name = %s
         """
-        self._execute(
+        affected = self._execute(
             query,
             (name, email, phone, company, datetime.now(), user_id, old_name)
         )
+        return affected > 0
 
     def get_client_with_responsible(self, name, email):
         """

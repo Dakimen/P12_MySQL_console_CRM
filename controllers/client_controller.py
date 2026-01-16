@@ -26,8 +26,11 @@ class ClientController:
         Recuperate all clients and display them with the help of client view
         """
         clients = self.client_service.get_all_clients()
-        for client in clients:
-            self.client_view.display_client(client)
+        try:
+            for client in clients:
+                self.client_view.display_client(client)
+        except TypeError:
+            self.client_view.message("No clients found!")
 
     def find_client_name(self):
         """
@@ -38,11 +41,11 @@ class ClientController:
         """
         name = self.client_view.get_client_search_key("full name")
         clients = self.client_service.find_by_name(name)
-        if clients is not None:
+        try:
             for client in clients:
                 self.client_view.display_client(client)
-        else:
-            self.client_view.message("Client not found")
+        except TypeError:
+            self.client_view.message("No clients found!")
 
     def find_client_email(self):
         """
@@ -53,11 +56,11 @@ class ClientController:
         """
         email = self.client_view.get_client_search_key("email")
         clients = self.client_service.find_by_email(email)
-        if clients is not None:
+        try:
             for client in clients:
                 self.client_view.display_client(client)
-        else:
-            self.client_view.message("Client not found")
+        except TypeError:
+            self.client_view.message("No clients found!")
 
     def add_client(self):
         """
@@ -69,10 +72,12 @@ class ClientController:
         full_name, email, phone, company = self.client_view.get_info_client()
         user_id = self.auth_service.get_user_id()
 
-        self.client_service.create_client(
+        if self.client_service.create_client(
             full_name, email, phone, company, user_id
-        )
-        self.client_view.message("Client added successfully!")
+        ):
+            self.client_view.message("Client added successfully!")
+        else:
+            self.client_view.message("Client addition failed!")
 
     def display_own_clients(self):
         """
@@ -80,8 +85,13 @@ class ClientController:
         """
         user_id = self.auth_service.get_user_id()
         clients = self.client_service.get_clients_for_user(user_id)
-        for client in clients:
-            self.client_view.display_client(client)
+        try:
+            for client in clients:
+                self.client_view.display_client(client)
+                return True
+        except TypeError:
+            self.client_view.message("No clients found!")
+            return False
 
     def update(self):
         """
@@ -90,14 +100,18 @@ class ClientController:
         Collects updated client information and passes it to client service.
         """
         user_id = self.auth_service.get_user_id()
-        self.display_own_clients()
+        if self.display_own_clients():
 
-        old_name = self.client_view.get_client_name()
-        new_data = self.client_view.get_modif_client_info()
+            old_name = self.client_view.get_client_name()
+            new_data = self.client_view.get_modif_client_info()
 
-        self.client_service.update_client(old_name, new_data, user_id)
-        self.client_view.message(
-            ("Client updated successfully!"
-             "Please verify that information "
-             "was added correctly through client search")
-             )
+            if self.client_service.update_client(old_name, new_data, user_id):
+                self.client_view.message(
+                    ("Client updated successfully! "
+                     "Please verify that information "
+                     "was added correctly through client search")
+                    )
+            else:
+                self.client_view.message("Update unsuccessful")
+        else:
+            print("No clients to update!")

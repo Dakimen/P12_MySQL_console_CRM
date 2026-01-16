@@ -52,9 +52,13 @@ class EventController:
                                                                    user_id,
                                                                    signed)
         if contract_id:
-            self.event_service.create_event(start, end, location, attendees,
-                                            notes, contract_id)
-            self.event_view.message("The event was created successfully!")
+            if self.event_service.create_event(start, end, location, attendees,
+                                               notes, contract_id):
+                return self.event_view.message(
+                    "The event was created successfully!"
+                    )
+            else:
+                return self.event_view.message("The event creation failed!")
         else:
             self.event_view.message("Contract not found")
             return None
@@ -117,9 +121,13 @@ class EventController:
         data = self.event_view.get_event_data()
         start, end, location, attendees, notes = data
         resp_email = self.event_view.get_new_responsible_email()
-        self.event_service.modify_event(start, end, location,
-                                        attendees, notes,
-                                        resp_email, contract_id)
-        return self.event_view.message(
-            "Event information modified successfully"
-            )
+        if self.event_service.modify_event(start, end, location,
+                                           attendees, notes,
+                                           resp_email, contract_id):
+            return self.event_view.message(
+                "Event information modified successfully"
+                )
+        else:
+            return self.event_view.message(
+                "Event information modification failed!"
+                )

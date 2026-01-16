@@ -32,10 +32,11 @@ class ContractService(BaseService):
         commercial_responsible_id, client_id)
         VALUES (%s, %s, %s, %s, UUID_TO_BIN(%s), UUID_TO_BIN(%s))
         """
-        self._execute(
+        affected = self._execute(
             query,
             (total, remaining, created, signed, com_id, cli_id)
         )
+        return affected > 0
 
     def get_all(self):
         """
@@ -152,7 +153,7 @@ class ContractService(BaseService):
             resp (str): UUID of the commercial responsible user.
 
         Returns:
-            None
+            True | False
 
         Side Effects:
             - Updates the matching contract record in the database.
@@ -166,8 +167,9 @@ class ContractService(BaseService):
           AND client_id = UUID_TO_BIN(%s)
           AND created_at = %s
         """
-        return self._execute(query, (full, remaining,
-                                     resp, client, created))
+        affected = self._execute(query, (full, remaining,
+                                         resp, client, created))
+        return affected > 0
 
     def sign_contract(self, created, client, resp, signed):
         """
@@ -180,7 +182,7 @@ class ContractService(BaseService):
             signed (bool): New signature status.
 
         Returns:
-            None
+            True | False
 
         Side Effects:
             - Updates the `signed` field of the contract record.
@@ -193,7 +195,8 @@ class ContractService(BaseService):
           AND client_id = UUID_TO_BIN(%s)
           AND created_at = %s
         """
-        return self._execute(query, (signed, resp, client, created))
+        affected = self._execute(query, (signed, resp, client, created))
+        return affected > 0
 
     def filter_by_not_signed(self, user_id):
         """

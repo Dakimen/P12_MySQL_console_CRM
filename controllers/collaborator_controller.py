@@ -42,9 +42,11 @@ class CollaboratorController:
         if bcrypt.checkpw(user_pass_input.encode(), hush.encode()):
             new_pass = self.collab_view.get_new_pass()
             new_hush = bcrypt.hashpw(new_pass.encode(), bcrypt.gensalt())
-            self.collab_service.set_new_pass(user_id, new_hush)
-            self.collab_view.message("Password changed successfully!")
-            return self.auth_service.clean_json_temp('temp.json')
+            if self.collab_service.set_new_pass(user_id, new_hush):
+                self.collab_view.message("Password changed successfully!")
+                return self.auth_service.clean_json_temp('temp.json')
+            else:
+                self.collab_view.message("Password change failed!")
         else:
             return self.collab_view.message(
                 "Password change failed, incorrect password"
@@ -72,9 +74,11 @@ class CollaboratorController:
         created_by = self.auth_service.get_user_id()
         name, email, temp_hush = self.collab_view.get_new_collab_info()
         temp_hush = bcrypt.hashpw(temp_hush.encode(), bcrypt.gensalt())
-        self.collab_service.save_user_to_db(name, email, temp_hush)
-        self.sentry.create_collaborator(name, email, created_by)
-        return self.collab_view.message("Collaborator added!")
+        if self.collab_service.save_user_to_db(name, email, temp_hush):
+            self.sentry.create_collaborator(name, email, created_by)
+            return self.collab_view.message("Collaborator added!")
+        else:
+            return self.collab_view.message("Collaborator addition failed!")
 
     def modif_name(self):
         """
@@ -82,9 +86,13 @@ class CollaboratorController:
         """
         updated_by = self.auth_service.get_user_id()
         email, name = self.collab_view.modif_name_view()
-        self.collab_service.update_user_name(name, email)
-        self.sentry.update_collaborator_name(name, email, updated_by)
-        return self.collab_view.message("Collaborator modified")
+        if self.collab_service.update_user_name(name, email):
+            self.sentry.update_collaborator_name(name, email, updated_by)
+            return self.collab_view.message("Collaborator modified")
+        else:
+            return self.collab_view.message(
+                "Collaborator modification failed!"
+                )
 
     def modif_email(self):
         """
@@ -92,9 +100,13 @@ class CollaboratorController:
         """
         updated_by = self.auth_service.get_user_id()
         name, email = self.collab_view.modif_email_view()
-        self.collab_service.update_user_email(email, name)
-        self.sentry.update_collaborator_email(name, email, updated_by)
-        return self.collab_view.message("Collaborator modified")
+        if self.collab_service.update_user_email(email, name):
+            self.sentry.update_collaborator_email(name, email, updated_by)
+            return self.collab_view.message("Collaborator modified")
+        else:
+            return self.collab_view.message(
+                "Collaborator modification failed!"
+                )
 
     def assign_role(self):
         """
@@ -103,10 +115,12 @@ class CollaboratorController:
         updated_by = self.auth_service.get_user_id()
         email = self.collab_view.get_email()
         role_choice = self.collab_view.get_role()
-        self.collab_service.assign_role(email, role_choice)
-        self.sentry.update_collaborator_role(email,
-                                             role_choice, updated_by)
-        return self.collab_view.message("Role assigned")
+        if self.collab_service.assign_role(email, role_choice):
+            self.sentry.update_collaborator_role(email,
+                                                 role_choice, updated_by)
+            return self.collab_view.message("Role assigned")
+        else:
+            return self.collab_view.message("Role assignation failed!")
 
     def find_user_by_email(self, email, password):
         """
